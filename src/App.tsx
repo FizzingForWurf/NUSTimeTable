@@ -1,10 +1,11 @@
-import { Counter } from './Counter'
+import Paths from './Paths';
+import Navbar from './views/Navbar';
 
-export const App = () => {
+export function App() {
   return (
     <>
-      <h1>React TypeScript Webpack Starter Template</h1>
-      <Counter />
+      <Navbar />
+      <Paths />
     </>
-  )
+  );
 }
