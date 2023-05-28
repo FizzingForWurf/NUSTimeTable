@@ -1,4 +1,6 @@
 import { FormEvent, useState } from 'react';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import styles from './Login.scss';
 import Register from './Register';
 
@@ -47,6 +49,7 @@ const Login = ({ invalid = true }: LoginProps) => {
       </form>
       <button onClick={openRegisterPage}>Register</button>
       <Register show={showRegister} onClose={closeRegisterPage} />
+      <ToastContainer />
     </div>
   );
 };

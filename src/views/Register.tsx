@@ -1,8 +1,14 @@
 import { FormEvent, useState } from 'react';
 import styles from './Register.scss';
 import { MdClose } from 'react-icons/md';
-import { registerUser } from '../Firebase/FirebaseAuth';
+import { Oval } from 'react-loader-spinner';
+
 import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
+import { AppDispatch, RootState } from '../redux/store';
+import { registerUser } from '../redux/RegisterSlice';
+import { useDispatch, useSelector } from 'react-redux';
 
 type RegisterProps = {
   show: boolean;
@@ -15,8 +21,10 @@ const INVALID_PW_LENGTH_ERROR =
   'Password is too short! Please use at least 6 characters';
 
 const Register = ({ show, onClose }: RegisterProps) => {
-  const [showError, setShowError] = useState('');
+  const dispatch = useDispatch<AppDispatch>();
+  const isLoading = useSelector((state: RootState) => state.register.isLoading);
 
+  const [showError, setShowError] = useState('');
   if (!show) return null;
 
   // Reset error message for next register
@@ -43,7 +51,14 @@ const Register = ({ show, onClose }: RegisterProps) => {
     else {
       setShowError('');
       console.log('Register user with: ', email, password);
-      registerUser(email, password, closeRegister);
+
+      dispatch(
+        registerUser({
+          email: email,
+          password: password,
+          closeRegisterPage: closeRegister,
+        })
+      );
     }
   };
 
@@ -89,16 +104,30 @@ const Register = ({ show, onClose }: RegisterProps) => {
             {showError && <p className={styles.passwordError}>{showError}</p>}
           </div>
           <div className={styles.registerFooter}>
-            <button type="submit">Submit</button>
-            <button
-              className={styles.cancelButton}
-              onClick={closeRegister}
-              type="button"
-            >
-              Cancel
-            </button>
-            <ToastContainer />
+            <div>
+              <button type="submit" disabled={isLoading}>
+                Submit
+              </button>
+              <button
+                className={styles.cancelButton}
+                onClick={closeRegister}
+                type="button"
+              >
+                Cancel
+              </button>
+            </div>
+            {isLoading && (
+              <Oval
+                width="16"
+                height="16"
+                color="black"
+                secondaryColor="grey"
+                ariaLabel="loading"
+                strokeWidth="8"
+              />
+            )}
           </div>
+          <ToastContainer />
         </form>
       </div>
     </div>

@@ -3,13 +3,15 @@ import {
   onAuthStateChanged,
   createUserWithEmailAndPassword,
 } from 'firebase/auth';
-import firebaseConfig from './FirebaseApp';
-import { initializeApp } from 'firebase/app';
 
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
+import firebaseConfig from './FirebaseApp';
+import { initializeApp } from 'firebase/app';
+
 initializeApp(firebaseConfig);
+
 const auth = getAuth();
 onAuthStateChanged(auth, (user) => {
   if (user) {
@@ -35,12 +37,12 @@ const showErrorToast = (message: string) => {
   });
 };
 
-export const registerUser = (
+export const firebaseRegisterUser = (
   email: string,
   password: string,
   closeRegisterPage: () => void
 ) => {
-  createUserWithEmailAndPassword(auth, email, password)
+  return createUserWithEmailAndPassword(auth, email, password)
     .then((userCredential) => {
       // Signed in
       const user = userCredential.user;
