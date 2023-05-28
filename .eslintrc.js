@@ -23,6 +23,7 @@ module.exports = {
   ],
   rules: {
     'no-unused-vars': 'off',
+    'import/no-named-as-default': 0,
     '@typescript-eslint/no-unused-vars': ['error'],
     '@typescript-eslint/no-var-requires': 'off',
     'react/prop-types': 'off',
@@ -30,4 +31,4 @@ module.exports = {
     'react/react-in-jsx-scope': 'off',
     '@typescript-eslint/explicit-module-boundary-types': 'off',
   },
-}
+};

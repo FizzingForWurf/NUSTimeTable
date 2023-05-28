@@ -1,0 +1,34 @@
+.loginContainer {
+  width: 40%;
+  padding: 16px;
+  margin: auto;
+}
+
+.loginButton {
+  background-color: #04aa6d;
+  color: white;
+  padding: 14px 20px;
+  margin: 8px 0;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+}
+
+.loginButton:hover {
+  opacity: 0.8;
+}
+
+.loginErrorMessage {
+  color: red;
+  font-weight: bold;
+}
+
+input[type='text'],
+input[type='password'] {
+  width: 100%;
+  padding: 12px 20px;
+  margin: 8px 0;
+  display: inline-block;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+}

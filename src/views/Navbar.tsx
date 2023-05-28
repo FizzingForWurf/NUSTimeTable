@@ -4,6 +4,8 @@ import styles from './Navbar.scss';
 const Navbar = () => {
   return (
     <nav className={styles.navbar}>
+      <Link to={'/'}>Home</Link>
+      <p>Search</p>
       <Link to={'/login'}>Login</Link>
     </nav>
   );
