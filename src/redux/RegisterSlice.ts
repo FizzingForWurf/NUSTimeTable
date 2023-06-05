@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { firebaseRegisterUser } from '../Firebase/FirebaseAuth';
+import { toast } from 'react-hot-toast';
 
 const initialState = {
   isLoading: false,
@@ -8,13 +9,9 @@ const initialState = {
 
 export const registerUser = createAsyncThunk(
   'register/registerUser',
-  (params: {
-    email: string;
-    password: string;
-    closeRegisterPage: () => void;
-  }) => {
-    const { email, password, closeRegisterPage } = params;
-    return firebaseRegisterUser(email, password, closeRegisterPage);
+  (params: { email: string; password: string }) => {
+    const { email, password } = params;
+    return firebaseRegisterUser(email, password);
   }
 );
 
@@ -30,22 +27,20 @@ const registerSlice = createSlice({
     builder.addCase(registerUser.fulfilled, (state, action) => {
       state.isLoading = false;
       state.errorMsg = '';
+
       console.log('Successfully register user: ', action.payload);
+      toast.success('Successfully registered!');
     });
     builder.addCase(registerUser.rejected, (state, action) => {
       state.isLoading = false;
+
       state.errorMsg = action.error.message || '';
+      console.log('ERROR: ', action.error.message);
+
+      if (action.error.code == 'auth/email-already-in-use')
+        toast.error('Email already in use! Please try logging in.');
     });
   },
-  // reducers: {
-  //     loading: (state) => {
-  //         state.isLoading = true;
-  //     },
-  //     error: (state, action) => {
-  //         state.isLoading = false;
-  //         state.errorMsg = action.payload;
-  //     }
-  // }
 });
 
 // export const { loading, error } = registerSlice.actions
