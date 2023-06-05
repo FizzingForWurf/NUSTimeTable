@@ -1,4 +1,6 @@
 build/
 node_modules
 
+.vs
+
 src/Firebase/FirebaseApp*
