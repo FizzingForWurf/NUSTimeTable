@@ -4,26 +4,43 @@ import Register from './Register';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../redux/store';
 import { loginUser } from '../redux/UserSlice';
-import LoadingSpinner from './LoadingSpinner';
 import { useNavigate } from 'react-router-dom';
+
+import TextField from '@mui/material/TextField';
+import {
+  Box,
+  Button,
+  FormControl,
+  IconButton,
+  InputAdornment,
+  InputLabel,
+  OutlinedInput,
+} from '@mui/material';
+import LoadingButton from '@mui/lab/LoadingButton';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
 
 const Login = () => {
   const [showRegister, setShowRegister] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
 
   const isLoading = useSelector((state: RootState) => state.user.isLoading);
   const loginErrorMsg = useSelector((state: RootState) => state.user.errorMsg);
 
-  const openRegisterPage = () => setShowRegister(true);
-  const closeRegisterPage = () => setShowRegister(false);
+  const handleMouseDownPassword = (
+    event: React.MouseEvent<HTMLButtonElement>
+  ) => {
+    event.preventDefault();
+  };
 
-  const handleLogin = async (e: FormEvent<HTMLFormElement>) => {
+  const handleLogin = (e: FormEvent<HTMLFormElement>) => {
     // Prevent the browser from reloading the page
     e.preventDefault();
-
-    const email = (e.currentTarget[0] as HTMLInputElement).value;
-    const password = (e.currentTarget[1] as HTMLInputElement).value;
 
     console.log(email, password);
     dispatch(loginUser({ email: email, password: password }))
@@ -37,15 +54,46 @@ const Login = () => {
   return (
     <div className={styles.loginContainer}>
       <form method="post" onSubmit={handleLogin}>
-        <label>
-          Email:
-          <input required type="text" />
-        </label>
+        <FormControl fullWidth>
+          <TextField
+            required
+            label="Email"
+            margin="normal"
+            type="email"
+            value={email}
+            onChange={(event) => {
+              setEmail(event.target.value);
+            }}
+          />
+          <Box sx={{ height: 12 }} />
+        </FormControl>
 
-        <label>
-          Password:
-          <input required type="password" />
-        </label>
+        <FormControl fullWidth variant="outlined">
+          <InputLabel>Password</InputLabel>
+          <OutlinedInput
+            required
+            margin="dense"
+            type={showPassword ? 'text' : 'password'}
+            endAdornment={
+              <InputAdornment position="end">
+                <IconButton
+                  aria-label="toggle password visibility"
+                  onClick={() => setShowPassword(!showPassword)}
+                  onMouseDown={handleMouseDownPassword}
+                  edge="end"
+                >
+                  {showPassword ? <VisibilityOff /> : <Visibility />}
+                </IconButton>
+              </InputAdornment>
+            }
+            label="Password"
+            value={password}
+            onChange={(event) => {
+              setPassword(event.target.value);
+            }}
+          />
+          <Box sx={{ height: 12 }} />
+        </FormControl>
 
         {loginErrorMsg && (
           <p className={styles.loginErrorMessage}>
@@ -53,23 +101,25 @@ const Login = () => {
           </p>
         )}
 
-        <button
-          className={styles.loginButton}
-          disabled={isLoading}
+        <LoadingButton
+          variant="contained"
+          loading={isLoading}
           type="submit"
+          sx={{ mb: 2, width: '100%', height: 48 }}
         >
-          <b>Login</b>
-        </button>
+          Login
+        </LoadingButton>
+
+        <Button
+          variant="contained"
+          sx={{ mb: 2, width: '100%', height: 48 }}
+          onClick={() => setShowRegister(true)}
+        >
+          Register
+        </Button>
       </form>
-      <button className={styles.loginButton} onClick={openRegisterPage}>
-        Register
-      </button>
-      <Register show={showRegister} onClose={closeRegisterPage} />
-      {isLoading && (
-        <div className={styles.loadingSpinner}>
-          <LoadingSpinner />
-        </div>
-      )}
+
+      <Register show={showRegister} onClose={() => setShowRegister(false)} />
     </div>
   );
 };

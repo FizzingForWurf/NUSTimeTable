@@ -1,6 +1,5 @@
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../redux/store';
-import LoadingSpinner from './LoadingSpinner';
 import { useState } from 'react';
 import { firebaseSignOutUser } from '../firebase/FirebaseAuth';
 import { useNavigate } from 'react-router-dom';
@@ -41,7 +40,7 @@ const Profile = () => {
 
       {error !== '' && <p>{error}</p>}
       <button onClick={handleLogout}>Sign out</button>
-      {isLoading && <LoadingSpinner />}
+      {isLoading && <p>Loading...</p>}
     </div>
   );
 };
