@@ -12,6 +12,7 @@
   border: none;
   cursor: pointer;
   width: 100%;
+  font-weight: bold;
 }
 
 .loginButton:hover {
@@ -31,4 +32,9 @@ input[type='password'] {
   display: inline-block;
   border: 1px solid #ccc;
   box-sizing: border-box;
+}
+
+.loadingSpinner {
+  display: flex;
+  justify-content: center;
 }

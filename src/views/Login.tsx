@@ -1,20 +1,24 @@
 import { FormEvent, useState } from 'react';
-import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 import styles from './Login.scss';
 import Register from './Register';
+import { useDispatch, useSelector } from 'react-redux';
+import { AppDispatch, RootState } from '../redux/store';
+import { loginUser } from '../redux/UserSlice';
+import LoadingSpinner from './LoadingSpinner';
+import { useNavigate } from 'react-router-dom';
 
-type LoginProps = {
-  invalid: boolean;
-};
-
-const Login = ({ invalid = true }: LoginProps) => {
+const Login = () => {
   const [showRegister, setShowRegister] = useState(false);
+  const navigate = useNavigate();
+  const dispatch = useDispatch<AppDispatch>();
+
+  const isLoading = useSelector((state: RootState) => state.user.isLoading);
+  const loginErrorMsg = useSelector((state: RootState) => state.user.errorMsg);
 
   const openRegisterPage = () => setShowRegister(true);
   const closeRegisterPage = () => setShowRegister(false);
 
-  const handleLogin = (e: FormEvent<HTMLFormElement>) => {
+  const handleLogin = async (e: FormEvent<HTMLFormElement>) => {
     // Prevent the browser from reloading the page
     e.preventDefault();
 
@@ -22,6 +26,12 @@ const Login = ({ invalid = true }: LoginProps) => {
     const password = (e.currentTarget[1] as HTMLInputElement).value;
 
     console.log(email, password);
+    dispatch(loginUser({ email: email, password: password }))
+      .unwrap()
+      .then(() => {
+        navigate('/', { replace: true });
+      })
+      .catch((e) => console.log(e));
   };
 
   return (
@@ -37,19 +47,29 @@ const Login = ({ invalid = true }: LoginProps) => {
           <input required type="password" />
         </label>
 
-        {invalid && (
+        {loginErrorMsg && (
           <p className={styles.loginErrorMessage}>
             Your email or password is incorrect! Please try again.
           </p>
         )}
 
-        <button className={styles.loginButton} type="submit">
+        <button
+          className={styles.loginButton}
+          disabled={isLoading}
+          type="submit"
+        >
           <b>Login</b>
         </button>
       </form>
-      <button onClick={openRegisterPage}>Register</button>
+      <button className={styles.loginButton} onClick={openRegisterPage}>
+        Register
+      </button>
       <Register show={showRegister} onClose={closeRegisterPage} />
-      <ToastContainer />
+      {isLoading && (
+        <div className={styles.loadingSpinner}>
+          <LoadingSpinner />
+        </div>
+      )}
     </div>
   );
 };

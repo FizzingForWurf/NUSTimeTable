@@ -1,14 +1,11 @@
 import { FormEvent, useState } from 'react';
 import styles from './Register.scss';
 import { MdClose } from 'react-icons/md';
-import { Oval } from 'react-loader-spinner';
-
-import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 
 import { AppDispatch, RootState } from '../redux/store';
 import { registerUser } from '../redux/RegisterSlice';
 import { useDispatch, useSelector } from 'react-redux';
+import LoadingSpinner from './LoadingSpinner';
 
 type RegisterProps = {
   show: boolean;
@@ -56,9 +53,13 @@ const Register = ({ show, onClose }: RegisterProps) => {
         registerUser({
           email: email,
           password: password,
-          closeRegisterPage: closeRegister,
         })
-      );
+      )
+        .unwrap()
+        .then(() => {
+          onClose();
+        })
+        .catch((e) => console.log(e));
     }
   };
 
@@ -116,18 +117,8 @@ const Register = ({ show, onClose }: RegisterProps) => {
                 Cancel
               </button>
             </div>
-            {isLoading && (
-              <Oval
-                width="16"
-                height="16"
-                color="black"
-                secondaryColor="grey"
-                ariaLabel="loading"
-                strokeWidth="8"
-              />
-            )}
+            {isLoading && <LoadingSpinner />}
           </div>
-          <ToastContainer />
         </form>
       </div>
     </div>
