@@ -3,7 +3,7 @@ import Paths from './Paths';
 import Navbar from './views/Navbar';
 import { Toaster } from 'react-hot-toast';
 import { useDispatch } from 'react-redux';
-import { firebaseCheckAuthState } from './Firebase/FirebaseAuth';
+import { firebaseCheckAuthState } from './firebase/FirebaseAuth';
 import { signInUser, signOutUser } from './redux/UserSlice';
 import { AppDispatch } from './redux/store';
 

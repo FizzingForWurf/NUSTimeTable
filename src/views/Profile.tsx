@@ -2,7 +2,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../redux/store';
 import LoadingSpinner from './LoadingSpinner';
 import { useState } from 'react';
-import { firebaseSignOutUser } from '../Firebase/FirebaseAuth';
+import { firebaseSignOutUser } from '../firebase/FirebaseAuth';
 import { useNavigate } from 'react-router-dom';
 import { signOutUser } from '../redux/UserSlice';
 import { toast } from 'react-hot-toast';

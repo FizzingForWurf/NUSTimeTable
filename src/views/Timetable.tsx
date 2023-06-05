@@ -2,7 +2,7 @@ import { useSelector } from 'react-redux';
 import { Counter } from '../Counter';
 import { toast } from 'react-hot-toast';
 import { RootState } from '../redux/store';
-import { firebaseGetCurrentUser } from '../Firebase/FirebaseAuth';
+import { firebaseGetCurrentUser } from '../firebase/FirebaseAuth';
 
 export const Timetable = () => {
   const curState = useSelector((state: RootState) => state);

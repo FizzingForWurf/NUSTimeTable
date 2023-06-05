@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { firebaseRegisterUser } from '../Firebase/FirebaseAuth';
+import { firebaseRegisterUser } from '../firebase/FirebaseAuth';
 import { toast } from 'react-hot-toast';
 
 const initialState = {
@@ -43,5 +43,4 @@ const registerSlice = createSlice({
   },
 });
 
-// export const { loading, error } = registerSlice.actions
 export default registerSlice.reducer;

@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { firebaseSignInUser } from '../Firebase/FirebaseAuth';
+import { firebaseSignInUser } from '../firebase/FirebaseAuth';
 import { User } from 'firebase/auth';
 import toast from 'react-hot-toast';
 
