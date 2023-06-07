@@ -1,18 +1,17 @@
+import { useParams } from 'react-router-dom';
 import { useState, useEffect } from 'react';
-import SearchModules from './SearchModules';
+//import { useSelector } from "react-redux";
+//import { RootState } from "../redux/store";
 
-interface Modules {
-  moduleCode: string;
-  title: string;
-}
-
-export default function Modules() {
+export const ModuleDetails = () => {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const params = useParams();
+  const moduleCode = params.moduleCode?.toUpperCase();
 
   useEffect(() => {
-    fetch(`https://api.nusmods.com/v2/2022-2023/moduleInfo.json`)
+    fetch(`https://api.nusmods.com/v2/2022-2023/modules/${moduleCode}.json`)
       .then((response) => {
         if (!response.ok) {
           throw new Error(
@@ -22,6 +21,7 @@ export default function Modules() {
         return response.json();
       })
       .then((actualData) => {
+        console.log(actualData);
         setData(actualData);
         setError(null);
       })
@@ -35,13 +35,14 @@ export default function Modules() {
   }, []);
 
   return (
-    <div className="App">
-      <h1>Module List</h1>
+    <div>
+      <h1>Module Details about {moduleCode}</h1>
       {loading && <div>A moment please...</div>}
       {error && (
         <div>{`There is a problem fetching the post data - ${error}`}</div>
       )}
-      <SearchModules data={data} />
+      <p>{JSON.stringify(data)}</p>
+      {/*<h1>{useSelector((state: RootState) => state.moduleData)}</h1>*/}
     </div>
   );
-}
+};

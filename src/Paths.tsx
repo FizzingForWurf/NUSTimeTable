@@ -2,14 +2,16 @@ import { Routes, Route } from 'react-router-dom';
 import Timetable from './views/Timetable';
 import Login from './views/Login';
 import Profile from './views/Profile';
-import Modules from './views/Modules';
+import ModulesCatalog from './views/ModulesCatalog';
+import { ModuleDetails } from './views/ModuleDetails';
 
 const Paths: React.FC = () => (
   <Routes>
     <Route path="/" element={<Timetable />}></Route>
     <Route path="/login" element={<Login />}></Route>
     <Route path="/profile" element={<Profile />}></Route>
-    <Route path="/modules" element={<Modules />}></Route>
+    <Route path="/modules" element={<ModulesCatalog />}></Route>
+    <Route path="/modules/:moduleCode" element={<ModuleDetails />}></Route>
   </Routes>
 );
 
