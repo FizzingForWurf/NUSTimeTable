@@ -10,15 +10,12 @@ import {
   browserSessionPersistence,
   User,
 } from 'firebase/auth';
+import FirebaseApp from './FirebaseApp';
 
-import firebaseConfig from './FirebaseApp';
-import { initializeApp } from 'firebase/app';
-
-initializeApp(firebaseConfig);
-const provider = new GoogleAuthProvider();
-
-const auth = getAuth();
+const auth = getAuth(FirebaseApp);
 auth.useDeviceLanguage();
+
+const provider = new GoogleAuthProvider();
 
 export const firebaseCheckAuthState = (
   onAuthChange: (_: User | null) => void

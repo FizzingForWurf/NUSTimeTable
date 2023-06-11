@@ -3,6 +3,11 @@ node_modules
 
 .vs
 
-src/Firebase/FirebaseApp*
-
+# Auto generated scss d.ts files
 declarations
+
+# Sample list of modules from NUS mods API
+ModuleInfo.json
+
+# Application secrets (API keys)
+.env

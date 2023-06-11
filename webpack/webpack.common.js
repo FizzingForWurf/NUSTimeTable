@@ -1,10 +1,16 @@
 const path = require('path');
+const DotEnv = require('dotenv-webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
   entry: path.resolve(__dirname, '..', './src/index.tsx'),
   resolve: {
     extensions: ['.tsx', '.ts', '.js'],
+    fallback: {
+      os: false, // dotenv
+      crypto: false, // dotenv
+      path: false, // dotenv
+    },
   },
   module: {
     rules: [
@@ -53,6 +59,7 @@ module.exports = {
     new HtmlWebpackPlugin({
       template: path.resolve(__dirname, '..', './src/index.html'),
     }),
+    new DotEnv(),
   ],
   stats: 'errors-only',
 };
