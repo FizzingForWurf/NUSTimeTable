@@ -4,3 +4,5 @@ node_modules
 .vs
 
 src/Firebase/FirebaseApp*
+
+declarations
