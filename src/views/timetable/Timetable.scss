@@ -1,0 +1,105 @@
+@import './_variables.scss';
+
+$timetable-padding: 16px;
+$timetable-min-width: $timetable-row-height * 16;
+
+.timetableWrapper {
+  padding: $timetable-padding;
+  width: 100%;
+}
+
+.timetableScroll {
+  overflow: auto;
+  width: 100%;
+}
+
+.timetableContainer {
+  width: 100%;
+  min-width: $timetable-min-width;
+}
+
+.timetableList {
+  list-style: none;
+  margin-left: 0;
+  padding-left: 0;
+  margin: 0;
+  border: $timetable-border;
+  border-left-width: 0;
+  border-radius: $btn-border-radius;
+}
+
+.timetableDayRow {
+  position: relative;
+  display: flex;
+  flex: 1 0 auto;
+  min-height: $timetable-row-height;
+  border-bottom: $timetable-border;
+
+  &:first-child {
+    > .dayName {
+      border-top-left-radius: $btn-border-radius;
+    }
+
+    > .dayRows {
+      border-top-right-radius: $btn-border-radius;
+    }
+  }
+
+  &:last-child {
+    border-bottom: 0;
+
+    > .dayName {
+      border-bottom-left-radius: $btn-border-radius;
+    }
+
+    > .dayRows {
+      border-bottom-right-radius: $btn-border-radius;
+    }
+  }
+}
+
+.dayName {
+  position: sticky;
+  left: 0;
+  z-index: 3;
+  display: flex;
+  flex: 0 0 $timetable-day-h-size;
+  justify-content: center;
+  align-items: center;
+  border: $timetable-border;
+  border-width: 0 1px;
+  font-weight: 600;
+  font-size: $font-size-s;
+  text-transform: uppercase;
+  background: white;
+
+  // @include media-breakpoint-down(sm) {
+  //   overflow: hidden;
+  //   flex: 0 0 $timetable-day-h-size-sm;
+
+  //   // On small screens, display the day names vertically
+  //   .dayNameText {
+  //     display: flex;
+  //     justify-content: center;
+  //     width: 0.6rem;
+  //     font-size: $font-size-s;
+  //     line-height: 1.1;
+  //     text-align: center;
+  //     word-break: break-all;
+  //   }
+  // }
+}
+
+.dayNameText {
+  color: $gray;
+}
+
+.dayRows {
+  position: relative;
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  min-height: $timetable-row-height;
+  padding-bottom: 0.3rem;
+  background: linear-gradient(to right, $gray-lightest 50%, transparent 50%);
+}
