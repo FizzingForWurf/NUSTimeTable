@@ -32,4 +32,5 @@ module.exports = {
     'react-hooks/exhaustive-deps': 'off',
     '@typescript-eslint/explicit-module-boundary-types': 'off',
   },
+  root: true
 };

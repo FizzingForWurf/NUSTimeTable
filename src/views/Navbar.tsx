@@ -69,6 +69,10 @@ const Navbar = ({ children }: { children: ReactNode }) => {
             NUS TimeTable
           </Typography>
 
+          <Button color="inherit" onClick={() => navigate('modules')}>
+            Module List
+          </Button>
+
           <Box sx={{ flexGrow: 1 }} />
 
           {!curUser && (
