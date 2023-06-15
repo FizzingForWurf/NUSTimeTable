@@ -61,7 +61,7 @@ $timetable-min-width: $timetable-row-height * 16;
 .dayName {
   position: sticky;
   left: 0;
-  z-index: 3;
+  z-index: $timetable-day-z-index;
   display: flex;
   flex: 0 0 $timetable-day-h-size;
   justify-content: center;

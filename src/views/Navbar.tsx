@@ -11,8 +11,8 @@ import {
   Typography,
   alpha,
 } from '@mui/material';
-import { AccountCircle, Search, Close } from '@mui/icons-material';
-import SearchBar, { SearchIconWrapper, StyledInputBase } from './SearchBar';
+import { AccountCircle } from '@mui/icons-material';
+import SearchBar from './search/SearchBar';
 import { ReactNode } from 'react';
 
 const Navbar = ({ children }: { children: ReactNode }) => {
@@ -39,18 +39,8 @@ const Navbar = ({ children }: { children: ReactNode }) => {
         }}
       >
         <Toolbar>
-          <SearchBar>
-            <SearchIconWrapper>
-              <Search />
-            </SearchIconWrapper>
-            <StyledInputBase
-              placeholder="Search…"
-              inputProps={{ 'aria-label': 'search' }}
-            />
-            <IconButton>
-              <Close sx={{ color: 'white', opacity: 0.5 }} />
-            </IconButton>
-          </SearchBar>
+          <SearchBar />
+
           <Typography
             variant="h6"
             component="div"
@@ -69,7 +59,11 @@ const Navbar = ({ children }: { children: ReactNode }) => {
             NUS TimeTable
           </Typography>
 
-          <Button color="inherit" onClick={() => navigate('modules')}>
+          <Button
+            color="inherit"
+            onClick={() => navigate('modules')}
+            sx={{ display: { xs: 'none', sm: 'block' } }}
+          >
             Module List
           </Button>
 
