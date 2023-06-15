@@ -1,12 +1,14 @@
 import { configureStore } from '@reduxjs/toolkit';
 import RegisterSlice from './RegisterSlice';
 import UserSlice from './UserSlice';
+import SearchSlice from './SearchSlice';
 // import ModuleDataSlice from './ModuleDataSlice';
 
 const Store = configureStore({
   reducer: {
     register: RegisterSlice,
     user: UserSlice,
+    search: SearchSlice,
     // moduleData: ModuleDataSlice,
   },
 });

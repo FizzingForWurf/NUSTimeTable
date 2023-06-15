@@ -11,7 +11,7 @@ export type ModuleCode = string;
 export type ModuleTitle = string;
 export type Semester = number;
 export type Department = string;
-export type Workload = string | readonly number[];
+export type Workload = string | number[];
 export type Venue = string;
 export type Weeks = NumericWeeks | WeekRange;
 export type NumericWeeks = readonly number[];
@@ -126,10 +126,12 @@ export const attributeDescription: { [key in keyof AttributeMap]: string } = {
   mpes2: "Included in Semester 2's Module Planning Exercise",
 };
 
-// RawLesson is a lesson time slot obtained from the API.
-// Lessons do not implement a modifiable interface.
-// They have to be injected in before using in the timetable.
-// Usually ModuleCode and ModuleTitle has to be injected in before using in the timetable.
+/**
+ * RawLesson is a lesson time slot obtained from the API.
+ * - Lessons do not implement a modifiable interface.
+ * - They have to be injected in before using in the timetable.
+ * - Usually `ModuleCode` and `ModuleTitle` has to be injected in before using in the timetable.
+ */
 export type RawLesson = Readonly<{
   classNo: ClassNo;
   day: DayText;
@@ -140,7 +142,9 @@ export type RawLesson = Readonly<{
   weeks: Weeks;
 }>;
 
-// Semester-specific information of a module.
+/**
+ * Semester-specific information of a module.
+ */
 export type SemesterData = {
   semester: Semester;
   timetable: readonly RawLesson[];
@@ -150,16 +154,20 @@ export type SemesterData = {
   examDuration?: number;
 };
 
-// This format is returned from the module list endpoint.
+/**
+ * This format is returned from the module list endpoint.
+ */
 export type ModuleCondensed = Readonly<{
   moduleCode: ModuleCode;
   title: ModuleTitle;
   semesters: readonly number[];
 }>;
 
-// This format is returned from the module information endpoint
-// Subset of Module object that contains the properties that are needed for module search
-export type ModuleInformation = Readonly<{
+/**
+ * This format is returned from the module information endpoint
+ * Subset of Module object that contains the properties that are needed for module search
+ */
+export type ModuleInformation = {
   // Basic info
   moduleCode: ModuleCode;
   title: ModuleTitle;
@@ -179,26 +187,28 @@ export type ModuleInformation = Readonly<{
   preclusion?: string;
 
   // Condensed semester info
-  semesterData: readonly SemesterDataCondensed[];
+  semesterData: SemesterDataCondensed[];
 
   // Requisite tree is not returned to save space
-}>;
+};
 
-// Information for a module for a particular academic year.
+/**
+ * Information for a module for a particular academic year.
+ */
 export type Module = {
-  acadYear: AcadYear;
+  acadYear: AcadYear; // string
 
   // Basic info
-  moduleCode: ModuleCode;
-  title: ModuleTitle;
+  moduleCode: ModuleCode; // string
+  title: ModuleTitle; // string
 
   // Additional info
   description?: string;
   moduleCredit: string;
-  department: Department;
-  faculty: Faculty;
-  workload?: Workload;
-  aliases?: ModuleCode[];
+  department: Department; // string
+  faculty: Faculty; // string
+  workload?: Workload; // string | readonly number[]
+  aliases?: ModuleCode[]; // string[]
   attributes?: NUSModuleAttributes;
   gradingBasisDescription?: string;
   additionalInformation?: string;
