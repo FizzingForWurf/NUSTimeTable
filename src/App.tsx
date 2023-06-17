@@ -19,10 +19,9 @@ export function App() {
   }, []);
 
   return (
-    <>
-      <Navbar />
+    <Navbar>
       <Paths />
       <Toaster position="bottom-center" />
-    </>
+    </Navbar>
   );
 }

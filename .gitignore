@@ -2,5 +2,10 @@ build/
 node_modules
 
 .vs
+.vscode
 
-src/Firebase/FirebaseApp*
+# Auto generated scss d.ts files
+declarations
+
+# Application secrets (API keys)
+.env

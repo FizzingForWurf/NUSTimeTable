@@ -1,5 +1,5 @@
 import { Routes, Route } from 'react-router-dom';
-import Timetable from './views/Timetable';
+import Timetable from './views/timetable/Timetable';
 import Login from './views/Login';
 import Profile from './views/Profile';
 import ModulesCatalog from './views/ModulesCatalog';
