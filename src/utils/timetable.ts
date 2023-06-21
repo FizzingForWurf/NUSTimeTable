@@ -22,11 +22,11 @@ import {
 // import { addDays, min as minDate, parseISO } from 'date-fns';
 
 import {
-  //   ClassNo,
-  //   consumeWeeks,
+  ClassNo,
+  // consumeWeeks,
   LessonType,
-  //   Module,
-  //   ModuleCode,
+  Module,
+  ModuleCode,
   NumericWeeks,
   RawLesson,
   Semester,
@@ -37,6 +37,7 @@ import {
   HoverLesson,
   Lesson,
   ModuleLessonConfig,
+  ModulesMap,
   SemTimetableConfig,
   SemTimetableConfigWithLessons,
   TimetableArrangement,
@@ -76,77 +77,100 @@ export const LESSON_ABBREV_TYPE: { [key: string]: LessonType } =
 export const LESSON_TYPE_SEP = ':';
 export const LESSON_SEP = ',';
 
-// const EMPTY_OBJECT = {};
+const EMPTY_OBJECT = {};
 
 export function isValidSemester(semester: Semester): boolean {
   return semester >= 1 && semester <= 4;
 }
 
-//  Returns a random configuration of a module's timetable lessons.
-//  Used when a module is first added.
-//  TODO: Suggest a configuration that does not clash with itself.
-//  {
-//    [lessonType: string]: ClassNo,
-//  }
+/**
+ * Returns a random configuration of a module's timetable lessons.
+ * Contains every lessonType from RawLesson[]. Used when a module is first added.
+ *
+ * TODO: Suggest a configuration that does not clash with itself.
+ * ```
+ * {
+ *    lessonType1: ClassNo1,
+ *    lessonType2: ClassNo2,
+ *    lessonType3: ClassNo3,
+ * }
+ * ```
+ * @param lessons
+ * @returns
+ */
 export function randomModuleLessonConfig(
   lessons: readonly RawLesson[]
 ): ModuleLessonConfig {
-  const lessonByGroups: { [lessonType: string]: readonly RawLesson[] } =
-    groupBy(lessons, (lesson) => lesson.lessonType);
+  const lessonByType: { [lessonType: string]: readonly RawLesson[] } = groupBy(
+    lessons,
+    (lesson) => lesson.lessonType
+  );
 
-  const lessonByGroupsByClassNo: {
+  const lessonByClassNo: {
     [lessonType: string]: { [classNo: string]: readonly RawLesson[] };
-  } = mapValues(
-    lessonByGroups,
-    (lessonsOfSamelessonType: readonly RawLesson[]) =>
-      groupBy(lessonsOfSamelessonType, (lesson) => lesson.classNo)
+  } = mapValues(lessonByType, (lessonsSameType: readonly RawLesson[]) =>
+    groupBy(lessonsSameType, (lesson) => lesson.classNo)
   );
 
   return mapValues(
-    lessonByGroupsByClassNo,
+    lessonByClassNo,
     (group: { [classNo: string]: readonly RawLesson[] }) =>
       (first(sample(group)) as RawLesson).classNo
   );
 }
 
-// Replaces ClassNo in SemTimetableConfig with Array<Lesson>
-// export function hydrateSemTimetableWithLessons(
-//   semTimetableConfig: SemTimetableConfig,
-//   modules: ModulesMap,
-//   semester: Semester
-// ): SemTimetableConfigWithLessons {
-//   return mapValues(
-//     semTimetableConfig,
-//     (moduleLessonConfig: ModuleLessonConfig, moduleCode: ModuleCode) => {
-//       const module: Module = modules[moduleCode];
-//       if (!module) return EMPTY_OBJECT;
+/**
+ * Replaces ClassNo in SemTimetableConfig with Lesson[]
+ *
+ * @param semTimetableConfig
+ * @param modules
+ * @param semester
+ * @returns `SemTimetableConfigWithLessons`
+ */
+export function hydrateSemTimetableWithLessons(
+  semTimetableConfig: SemTimetableConfig,
+  modules: ModulesMap,
+  semester: Semester
+): SemTimetableConfigWithLessons {
+  return mapValues(
+    semTimetableConfig,
+    (moduleLessonConfig: ModuleLessonConfig, moduleCode: ModuleCode) => {
+      const module: Module = modules[moduleCode];
+      if (!module) return EMPTY_OBJECT;
 
-//       // TODO: Split this part into a smaller function: hydrateModuleConfigWithLessons.
-//       return mapValues(
-//         moduleLessonConfig,
-//         (classNo: ClassNo, lessonType: LessonType) => {
-//           const lessons = getModuleTimetable(module, semester);
-//           const newLessons = lessons.filter(
-//             (lesson: RawLesson): boolean =>
-//               lesson.lessonType === lessonType && lesson.classNo === classNo
-//           );
+      return mapValues(
+        moduleLessonConfig,
+        (classNo: ClassNo, lessonType: LessonType) => {
+          const modSemData = module.semesterData.find(
+            (semData) => semData.semester === semester
+          );
+          const lessons = modSemData?.timetable || [];
 
-//           const timetableLessons: Lesson[] = newLessons.map(
-//             (lesson: RawLesson): Lesson => ({
-//               ...lesson,
-//               moduleCode,
-//               title: module.title,
-//             })
-//           );
-//           return timetableLessons;
-//         }
-//       );
-//     }
-//   );
-// }
+          // Find lessons for each `lessonType` and `classNo`
+          const newLessons = lessons.filter(
+            (lesson: RawLesson): boolean =>
+              lesson.lessonType === lessonType && lesson.classNo === classNo
+          );
+
+          // Inject `moduleCode` and `title` to convert `RawLesson` -> `Lesson`
+          const timetableLessons: Lesson[] = newLessons.map(
+            (lesson: RawLesson): Lesson => ({
+              ...lesson,
+              moduleCode,
+              title: module.title,
+            })
+          );
+
+          return timetableLessons;
+        }
+      );
+    }
+  );
+}
 
 /**
  * Filters a flat array of lessons and returns the lessons corresponding to lessonType.
+ *
  * @param lessons
  * @param lessonType
  * @returns

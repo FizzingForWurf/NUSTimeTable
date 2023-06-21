@@ -97,7 +97,7 @@ const AddModuleButton = ({
     if (moduleInfo !== undefined) {
       // Add moduleInfo to timetable redux slice
       console.log(moduleInfo);
-      dispatch(addModule({ semester: 1, module: moduleInfo }));
+      dispatch(addModule({ semester: mainSemester, module: moduleInfo }));
     }
   };
 
