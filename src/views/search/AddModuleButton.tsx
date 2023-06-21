@@ -1,6 +1,7 @@
 import {
   Card,
   CardActionArea,
+  CircularProgress,
   Divider,
   Menu,
   MenuItem,
@@ -9,6 +10,13 @@ import {
 import { ArrowDropDown } from '@mui/icons-material';
 import { SemesterDataCondensed } from '../../types/modules';
 import { useState } from 'react';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../redux/store';
+import {
+  getMainSemester,
+  getModuleInfo,
+  getOtherSemesters,
+} from '../../utils/module';
 
 const MoreButton = ({ semesters }: { semesters: string[] }) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -17,6 +25,14 @@ const MoreButton = ({ semesters }: { semesters: string[] }) => {
   };
   const handleMoreClose = () => {
     setAnchorEl(null);
+  };
+
+  const handleAddModuleClick = async () => {
+    // const moduleInfo = await getModuleInfo(moduleCode, setIsLoading);
+    // if (moduleInfo !== undefined) {
+    //   // Add moduleInfo to timetable redux slice
+    //   console.log(moduleInfo);
+    // }
   };
 
   return (
@@ -32,6 +48,7 @@ const MoreButton = ({ semesters }: { semesters: string[] }) => {
       >
         <ArrowDropDown />
       </CardActionArea>
+
       <Menu
         anchorEl={anchorEl}
         open={Boolean(anchorEl)}
@@ -46,7 +63,11 @@ const MoreButton = ({ semesters }: { semesters: string[] }) => {
         }}
       >
         {semesters.map((sem) => {
-          return <MenuItem key={sem}>Add to {sem}</MenuItem>;
+          return (
+            <MenuItem key={sem} onClick={handleAddModuleClick}>
+              Add to {sem}
+            </MenuItem>
+          );
         })}
       </Menu>
     </>
@@ -60,19 +81,24 @@ const AddModuleButton = ({
   moduleCode: string;
   semesterData: SemesterDataCondensed[];
 }) => {
-  const semesterString = [
-    'Semester 1',
-    'Semester 2',
-    'Special Term I',
-    'Special Term II',
-  ];
+  const [isLoading, setIsLoading] = useState(false);
 
-  const semesterNames = semesterData.map((sem) => {
-    return semesterString[sem.semester - 1];
-  });
+  const currentSem = useSelector(
+    (state: RootState) => state.timetable.semester
+  );
 
-  const handleAddClick = () => {
-    console.log(moduleCode, semesterData);
+  const mainSemesterString = getMainSemester(currentSem, semesterData);
+  const otherSemestersString = getOtherSemesters(
+    mainSemesterString,
+    semesterData
+  );
+
+  const handleAddClick = async () => {
+    const moduleInfo = await getModuleInfo(moduleCode, setIsLoading);
+    if (moduleInfo !== undefined) {
+      // Add moduleInfo to timetable redux slice
+      console.log(moduleInfo);
+    }
   };
 
   return (
@@ -83,6 +109,7 @@ const AddModuleButton = ({
         bgcolor: 'primary.main',
         color: 'white',
         height: '48px',
+        width: '100%',
         display: 'flex',
       }}
     >
@@ -93,8 +120,15 @@ const AddModuleButton = ({
           alignItems: 'center',
           justifyContent: 'center',
         }}
+        disabled={isLoading}
       >
-        <Typography variant="subtitle1">Add to {semesterNames[0]}</Typography>
+        {isLoading ? (
+          <CircularProgress size={24} thickness={5} color="inherit" />
+        ) : (
+          <Typography variant="subtitle1">
+            Add to {mainSemesterString}
+          </Typography>
+        )}
       </CardActionArea>
 
       {semesterData.length > 1 && (
@@ -105,7 +139,7 @@ const AddModuleButton = ({
             variant="middle"
             sx={{ borderRightWidth: 1, bgcolor: 'white' }}
           />
-          <MoreButton semesters={semesterNames} />
+          <MoreButton semesters={otherSemestersString} />
         </>
       )}
     </Card>
