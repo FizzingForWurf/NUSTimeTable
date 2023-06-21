@@ -1,7 +1,8 @@
 import axios from 'axios';
 import { Module, SemesterDataCondensed } from '../types/modules';
 
-const semesterString = [
+export const semesterStringName = [
+  '', // 1-based indexing
   'Semester 1',
   'Semester 2',
   'Special Term I',
@@ -19,25 +20,20 @@ export const getMainSemester = (
 
   // Show main button with current semester if offered currently
   // Or show first other semester offered
-  const mainSemester = isOfferedCurrentSem
-    ? currentSem
-    : semesterData[0].semester;
-
-  // Return name of mainSemester
-  return semesterString[mainSemester - 1];
+  return isOfferedCurrentSem ? currentSem : semesterData[0].semester;
 };
 
 export const getOtherSemesters = (
-  mainSemester: string,
+  mainSemester: number,
   semesterData: SemesterDataCondensed[]
 ) => {
-  // Get the names of other semesters offered
-  const otherSemesters = semesterData.map((sem) => {
-    return semesterString[sem.semester - 1];
-  });
-
   // Remove mainSemester from list of alternative semester selection
-  return otherSemesters.filter((sem) => sem !== mainSemester);
+  const otherSemesters = semesterData.filter(
+    (sem) => sem.semester !== mainSemester
+  );
+
+  // Return the semester number of other semester offered
+  return otherSemesters.map((sem) => sem.semester);
 };
 
 export const getModuleInfo = async (

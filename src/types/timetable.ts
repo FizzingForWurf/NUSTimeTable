@@ -6,6 +6,11 @@ import {
   RawLesson,
 } from './modules';
 
+// Mapping of module to color index [0, NUM_DIFFERENT_COLORS)
+export type ColorMapping = { [moduleCode: string]: ColorIndex };
+export type SemesterColorMap = { [semester: string]: ColorMapping };
+export type HiddenModulesMap = { [semester: string]: ModuleCode[] };
+
 //  ModuleLessonConfig is a mapping of lessonType to ClassNo for a module.
 export type ModuleLessonConfig = {
   [lessonType: string]: ClassNo;

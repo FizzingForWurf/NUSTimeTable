@@ -145,7 +145,12 @@ export function randomModuleLessonConfig(
 //   );
 // }
 
-//  Filters a flat array of lessons and returns the lessons corresponding to lessonType.
+/**
+ * Filters a flat array of lessons and returns the lessons corresponding to lessonType.
+ * @param lessons
+ * @param lessonType
+ * @returns
+ */
 export function lessonsForLessonType<T extends RawLesson>(
   lessons: readonly T[],
   lessonType: LessonType
@@ -153,31 +158,48 @@ export function lessonsForLessonType<T extends RawLesson>(
   return lessons.filter((lesson) => lesson.lessonType === lessonType);
 }
 
-//  Converts from timetable config format to flat array of lessons.
-//  {
-//    [moduleCode: string]: {
-//      [lessonType: string]: [Lesson, Lesson, ...],
-//      [lessonType: string]: [Lesson, ...],
-//    }
-//  }
+/**
+ * Converts from timetable config format to flat array of lessons.
+ * ```
+ * {
+ *    [moduleCode: string]: {
+ *      [lessonType: string]: [Lesson, Lesson, ...],
+ *      [lessonType: string]: [Lesson, ...],
+ *    }
+ * }
+ * ```
+ * @param timetable
+ * @returns
+ */
 export function timetableLessonsArray(
   timetable: SemTimetableConfigWithLessons
 ): Lesson[] {
   return flatMapDeep(timetable, values);
 }
 
-//  Groups flat array of lessons by day.
-//  {
-//    Monday: [Lesson, Lesson, ...],
-//    Tuesday: [Lesson, ...],
-//  }
+/**
+ * Groups flat array of lessons by day.
+ * ```
+ * {
+ *    Monday: [Lesson, Lesson, ...],
+ *    Tuesday: [Lesson, ...],
+ * }
+ * ```
+ * @param lessons
+ * @returns
+ */
 export function groupLessonsByDay(
   lessons: ColoredLesson[]
 ): TimetableDayFormat {
   return groupBy(lessons, (lesson) => lesson.day);
 }
 
-//  Determines if two lessons overlap:
+/**
+ * Determines if two lessons overlap:
+ * @param lesson1
+ * @param lesson2
+ * @returns boolean of whether lesson1 and lesson2 overlap
+ */
 export function doLessonsOverlap(lesson1: Lesson, lesson2: Lesson): boolean {
   return (
     lesson1.day === lesson2.day &&
@@ -186,13 +208,19 @@ export function doLessonsOverlap(lesson1: Lesson, lesson2: Lesson): boolean {
   );
 }
 
-//  Converts a flat array of lessons *for ONE day* into rows of lessons within that day row.
-//  Result invariants:
-//  - Each lesson will not overlap with each other.
-//  [
-//    [Lesson, Lesson, ...],
-//    [Lesson, ...],
-//  ]
+/**
+ * Converts a flat array of lessons *for ONE day* into rows of lessons within that day row.
+ * Result invariants:
+ * - Each lesson will not overlap with each other.
+ * ```
+ * [
+ *    [Lesson, Lesson, ...],
+ *    [Lesson, ...],
+ * ]
+ * ```
+ * @param lessons
+ * @returns
+ */
 export function arrangeLessonsWithinDay(
   lessons: ColoredLesson[]
 ): TimetableDayArrangement {
@@ -221,20 +249,26 @@ export function arrangeLessonsWithinDay(
   return rows;
 }
 
-//  Accepts a flat array of lessons and groups them by day and rows with each day
-//  for rendering on the timetable.
-//  Clashes in Array<Lesson> will go onto the next row within that day.
-//  {
-//    Monday: [
-//      [Lesson, Lesson, ...],
-//    ],
-//    Tuesday: [
-//      [Lesson, Lesson, Lesson, ...],
-//      [Lesson, Lesson, ...],
-//      [Lesson, ...],
-//    ],
-//    ...
-//  }
+/**
+ * Accepts a flat array of lessons and groups them by day and rows with each day
+ * for rendering on the timetable.
+ * Clashes in Array<Lesson> will go onto the next row within that day.
+ * ```
+ * {
+ *    Monday: [
+ *      [Lesson, Lesson, ...],
+ *    ],
+ *    Tuesday: [
+ *      [Lesson, Lesson, Lesson, ...],
+ *      [Lesson, Lesson, ...],
+ *      [Lesson, ...],
+ *    ],
+ *    ...
+ * }
+ * ```
+ * @param lessons
+ * @returns `TimetableArrangement`
+ */
 export function arrangeLessonsForWeek(
   lessons: ColoredLesson[]
 ): TimetableArrangement {
@@ -244,8 +278,14 @@ export function arrangeLessonsForWeek(
   );
 }
 
-// Determines if a Lesson on the timetable can be modifiable / dragged around.
-// Condition: There are multiple ClassNo for all the Array<Lesson> in a lessonType.
+/**
+ * Determines if a Lesson on the timetable can be modifiable / dragged around.
+ *
+ * Condition: There are multiple `ClassNo` for all the Array<Lesson> in a `lessonType`.
+ * @param lessons
+ * @param lessonType
+ * @returns
+ */
 export function areOtherClassesAvailable(
   lessons: readonly RawLesson[],
   lessonType: LessonType

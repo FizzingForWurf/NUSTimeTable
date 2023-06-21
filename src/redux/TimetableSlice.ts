@@ -1,12 +1,18 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 import { Module } from '../types/modules';
+import {
+  HiddenModulesMap,
+  Lesson,
+  ModuleLessonConfig,
+  TimetableConfig,
+} from '../types/timetable';
+import { groupBy, mapValues } from 'lodash';
 
 const initialState = {
-  semester: 1 as number,
-  1: [] as Module[],
-  2: [] as Module[],
-  3: [] as Module[],
-  4: [] as Module[],
+  semester: 1,
+  activeLesson: null as Lesson | null,
+  lessons: {} as TimetableConfig,
+  hidden: {} as HiddenModulesMap,
 };
 
 const timetableSlice = createSlice({
@@ -16,49 +22,31 @@ const timetableSlice = createSlice({
     changeSemester: (state, action: PayloadAction<number>) => {
       state.semester = action.payload;
     },
-    addModuleCurrentSem: (state, action: PayloadAction<Module>) => {
-      switch (state.semester) {
-        case 1:
-          state[1].push(action.payload);
-          break;
-        case 2:
-          state[2].push(action.payload);
-          break;
-        case 3:
-          state[3].push(action.payload);
-          break;
-        case 4:
-          state[4].push(action.payload);
-          break;
-      }
-    },
-    removeModuleCurrentSem: (state, action: PayloadAction<string>) => {
-      switch (state.semester) {
-        case 1:
-          state[1] = state[1].filter(
-            (mod) => mod.moduleCode !== action.payload
-          );
-          break;
-        case 2:
-          state[2] = state[2].filter(
-            (mod) => mod.moduleCode !== action.payload
-          );
-          break;
-        case 3:
-          state[3] = state[3].filter(
-            (mod) => mod.moduleCode !== action.payload
-          );
-          break;
-        case 4:
-          state[4] = state[4].filter(
-            (mod) => mod.moduleCode !== action.payload
-          );
-          break;
-      }
+    addModule: (state, action) => {
+      const { semester, module }: { semester: number; module: Module } =
+        action.payload;
+
+      const moduleCode = module.moduleCode;
+      const curSemData =
+        module.semesterData.find((sem) => sem.semester === semester) ||
+        module.semesterData[0];
+
+      // Group by `lessonType` for `SemTimetableConfig`
+      const grpByLessonType = groupBy(
+        curSemData.timetable,
+        (lesson) => lesson.lessonType
+      );
+      // Gets the first `classNo` for each `lessonType`
+      const lessonData: ModuleLessonConfig = mapValues(
+        grpByLessonType,
+        (lessons) => lessons[0].classNo
+      );
+      console.log(lessonData);
+
+      state.lessons[semester] = { [moduleCode]: lessonData };
     },
   },
 });
 
-export const { changeSemester, addModuleCurrentSem, removeModuleCurrentSem } =
-  timetableSlice.actions;
+export const { changeSemester, addModule } = timetableSlice.actions;
 export default timetableSlice.reducer;

@@ -10,15 +10,17 @@ import {
 import { ArrowDropDown } from '@mui/icons-material';
 import { SemesterDataCondensed } from '../../types/modules';
 import { useState } from 'react';
-import { useSelector } from 'react-redux';
-import { RootState } from '../../redux/store';
+import { useDispatch, useSelector } from 'react-redux';
+import { AppDispatch, RootState } from '../../redux/store';
 import {
   getMainSemester,
   getModuleInfo,
   getOtherSemesters,
+  semesterStringName,
 } from '../../utils/module';
+import { addModule } from '../../redux/TimetableSlice';
 
-const MoreButton = ({ semesters }: { semesters: string[] }) => {
+const MoreButton = ({ semesters }: { semesters: number[] }) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const handleMoreClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
@@ -65,7 +67,7 @@ const MoreButton = ({ semesters }: { semesters: string[] }) => {
         {semesters.map((sem) => {
           return (
             <MenuItem key={sem} onClick={handleAddModuleClick}>
-              Add to {sem}
+              Add to {semesterStringName[sem]}
             </MenuItem>
           );
         })}
@@ -82,22 +84,20 @@ const AddModuleButton = ({
   semesterData: SemesterDataCondensed[];
 }) => {
   const [isLoading, setIsLoading] = useState(false);
-
+  const dispatch = useDispatch<AppDispatch>();
   const currentSem = useSelector(
     (state: RootState) => state.timetable.semester
   );
 
-  const mainSemesterString = getMainSemester(currentSem, semesterData);
-  const otherSemestersString = getOtherSemesters(
-    mainSemesterString,
-    semesterData
-  );
+  const mainSemester = getMainSemester(currentSem, semesterData);
+  const otherSemesters = getOtherSemesters(mainSemester, semesterData);
 
   const handleAddClick = async () => {
     const moduleInfo = await getModuleInfo(moduleCode, setIsLoading);
     if (moduleInfo !== undefined) {
       // Add moduleInfo to timetable redux slice
       console.log(moduleInfo);
+      dispatch(addModule({ semester: 1, module: moduleInfo }));
     }
   };
 
@@ -126,7 +126,7 @@ const AddModuleButton = ({
           <CircularProgress size={24} thickness={5} color="inherit" />
         ) : (
           <Typography variant="subtitle1">
-            Add to {mainSemesterString}
+            Add to {semesterStringName[mainSemester]}
           </Typography>
         )}
       </CardActionArea>
@@ -139,7 +139,7 @@ const AddModuleButton = ({
             variant="middle"
             sx={{ borderRightWidth: 1, bgcolor: 'white' }}
           />
-          <MoreButton semesters={otherSemestersString} />
+          <MoreButton semesters={otherSemesters} />
         </>
       )}
     </Card>
