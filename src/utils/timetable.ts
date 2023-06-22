@@ -3,7 +3,7 @@ import {
   //   difference,
   //   each,
   first,
-  flatMapDeep,
+  // flatMapDeep,
   //   get,
   groupBy,
   invert,
@@ -17,7 +17,7 @@ import {
   //   pick,
   range,
   sample,
-  values,
+  // values,
 } from 'lodash';
 // import { addDays, min as minDate, parseISO } from 'date-fns';
 
@@ -127,7 +127,7 @@ export function randomModuleLessonConfig(
  * @param semester
  * @returns `SemTimetableConfigWithLessons`
  */
-export function hydrateSemTimetableWithLessons(
+export function populateSemTimetableWithLessons(
   semTimetableConfig: SemTimetableConfig,
   modules: ModulesMap,
   semester: Semester
@@ -180,25 +180,6 @@ export function lessonsForLessonType<T extends RawLesson>(
   lessonType: LessonType
 ): readonly T[] {
   return lessons.filter((lesson) => lesson.lessonType === lessonType);
-}
-
-/**
- * Converts from timetable config format to flat array of lessons.
- * ```
- * {
- *    [moduleCode: string]: {
- *      [lessonType: string]: [Lesson, Lesson, ...],
- *      [lessonType: string]: [Lesson, ...],
- *    }
- * }
- * ```
- * @param timetable
- * @returns
- */
-export function timetableLessonsArray(
-  timetable: SemTimetableConfigWithLessons
-): Lesson[] {
-  return flatMapDeep(timetable, values);
 }
 
 /**
