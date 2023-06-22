@@ -13,11 +13,11 @@ import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../../redux/store';
 import {
-  getMainSemester,
+  getFirstAvailableSemester,
   getModuleInfo,
-  getOtherSemesters,
+  getSemestersOffered,
   semesterStringName,
-} from '../../utils/module';
+} from '../../utils/moduleUtils';
 import { addModule } from '../../redux/TimetableSlice';
 
 const MoreButton = ({ semesters }: { semesters: number[] }) => {
@@ -89,8 +89,8 @@ const AddModuleButton = ({
     (state: RootState) => state.timetable.semester
   );
 
-  const mainSemester = getMainSemester(currentSem, semesterData);
-  const otherSemesters = getOtherSemesters(mainSemester, semesterData);
+  const mainSemester = getFirstAvailableSemester(semesterData, currentSem);
+  const otherSemesters = getSemestersOffered(semesterData, mainSemester);
 
   const handleAddClick = async () => {
     const moduleInfo = await getModuleInfo(moduleCode, setIsLoading);
