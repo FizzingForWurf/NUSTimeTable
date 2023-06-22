@@ -1,0 +1,9 @@
+@import './_variables.scss';
+
+.timetableRow {
+  position: relative;
+  display: flex;
+  flex: 1 0 auto;
+  min-width: $timetable-col-width;
+  margin-bottom: 1px;
+}
