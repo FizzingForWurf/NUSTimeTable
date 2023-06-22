@@ -48,7 +48,7 @@ import {
 // import { ModuleCodeMap, ModulesMap } from 'types/reducers';
 // import { ExamClashes } from 'types/views';
 
-import { getTimeAsDate } from './timify';
+import { getTimeAsDate } from './timeUtils';
 // import { getModuleSemesterData, getModuleTimetable } from './modules';
 // import { deltas } from './array';
 

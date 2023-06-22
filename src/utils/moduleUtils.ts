@@ -8,7 +8,7 @@ import {
   SemesterDataCondensed,
 } from '../types/modules';
 import { Lesson } from '../types/timetable';
-import { toSingaporeTime } from './timify';
+import { toSingaporeTime } from './timeUtils';
 import { format } from 'date-fns';
 import { get } from 'lodash';
 
