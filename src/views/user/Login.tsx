@@ -2,8 +2,8 @@ import { FormEvent, useState } from 'react';
 import styles from './Login.scss';
 import Register from './Register';
 import { useDispatch, useSelector } from 'react-redux';
-import { AppDispatch, RootState } from '../redux/store';
-import { loginUser } from '../redux/UserSlice';
+import { AppDispatch, RootState } from '../../redux/store';
+import { loginUser } from '../../redux/UserSlice';
 import { useNavigate } from 'react-router-dom';
 
 import TextField from '@mui/material/TextField';

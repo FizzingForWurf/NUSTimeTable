@@ -14,7 +14,7 @@ export type Department = string;
 export type Workload = string | number[];
 export type Venue = string;
 export type Weeks = NumericWeeks | WeekRange;
-export type NumericWeeks = readonly number[];
+export type NumericWeeks = number[];
 export type WeekRange = {
   // The start and end dates
   start: string;
@@ -132,7 +132,7 @@ export const attributeDescription: { [key in keyof AttributeMap]: string } = {
  * - They have to be injected in before using in the timetable.
  * - Usually `ModuleCode` and `ModuleTitle` has to be injected in before using in the timetable.
  */
-export type RawLesson = Readonly<{
+export type RawLesson = {
   classNo: ClassNo;
   day: DayText;
   startTime: StartTime;
@@ -140,14 +140,14 @@ export type RawLesson = Readonly<{
   lessonType: LessonType;
   venue: Venue;
   weeks: Weeks;
-}>;
+};
 
 /**
  * Semester-specific information of a module.
  */
 export type SemesterData = {
   semester: Semester;
-  timetable: readonly RawLesson[];
+  timetable: RawLesson[];
 
   // Exam
   examDate?: string;
@@ -223,11 +223,11 @@ export type Module = {
   preclusionRule?: string;
 
   // Semester data
-  semesterData: readonly SemesterData[];
+  semesterData: SemesterData[];
 
   // Requisites
   prereqTree?: PrereqTree;
-  fulfillRequirements?: readonly ModuleCode[];
+  fulfillRequirements?: ModuleCode[];
 
   // Meta
   timestamp: number;

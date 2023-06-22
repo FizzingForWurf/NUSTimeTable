@@ -8,8 +8,8 @@ import {
   FilledInput,
 } from '@mui/material';
 
-import { AppDispatch, RootState } from '../redux/store';
-import { registerUser } from '../redux/RegisterSlice';
+import { AppDispatch, RootState } from '../../redux/store';
+import { registerUser } from '../../redux/RegisterSlice';
 import { useDispatch, useSelector } from 'react-redux';
 
 import Button from '@mui/material/Button';

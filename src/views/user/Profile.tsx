@@ -1,9 +1,9 @@
 import { useDispatch, useSelector } from 'react-redux';
-import { AppDispatch, RootState } from '../redux/store';
+import { AppDispatch, RootState } from '../../redux/store';
 import { useState } from 'react';
-import { firebaseSignOutUser } from '../firebase/FirebaseAuth';
+import { firebaseSignOutUser } from '../../firebase/FirebaseAuth';
 import { useNavigate } from 'react-router-dom';
-import { signOutUser } from '../redux/UserSlice';
+import { signOutUser } from '../../redux/UserSlice';
 import { toast } from 'react-hot-toast';
 
 const Profile = () => {

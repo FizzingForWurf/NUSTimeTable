@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { autocompleteModule } from '../utils/search';
+import { autocompleteModule } from '../utils/searchUtils';
 import { ModuleInformation } from '../types/modules';
 
 const initialState = {

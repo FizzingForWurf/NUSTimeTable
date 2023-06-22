@@ -6,6 +6,7 @@ module.exports = {
   entry: path.resolve(__dirname, '..', './src/index.tsx'),
   resolve: {
     extensions: ['.tsx', '.ts', '.js'],
+    modules: [path.resolve(__dirname, '../src'), 'node_modules'],
     fallback: {
       os: false, // dotenv
       crypto: false, // dotenv
