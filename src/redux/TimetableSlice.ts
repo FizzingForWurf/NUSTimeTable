@@ -4,6 +4,7 @@ import {
   HiddenModulesMap,
   HoverLesson,
   Lesson,
+  ModifiedCell,
   ModulesMap,
   TimetableConfig,
 } from '../types/timetable';
@@ -11,11 +12,19 @@ import { randomModuleLessonConfig } from '../utils/timetableUtils';
 import { getModuleSemesterData } from '../utils/moduleUtils';
 
 const initialState = {
+  /** Currently viewed semester */
   semester: 1,
+  /** Active lesson awaiting to be modified */
   activeLesson: null as Lesson | null,
+  /** Currently hovered lesson. Used to show same classes as currently hovered class */
   hoverLesson: null as HoverLesson | null,
+  /** Position of last modified cell. Used to maintain scroll position */
+  modifiedCell: {} as ModifiedCell | null,
+  /** All selected modules across all semesters */
   modules: {} as ModulesMap,
+  /** Selected lesson configuration for each selected module across all semesters */
   lessons: {} as TimetableConfig,
+  /** Modules that are hidden by user */
   hidden: {} as HiddenModulesMap,
 };
 
@@ -32,22 +41,13 @@ const timetableSlice = createSlice({
     cancelModifyActiveLesson: (state) => {
       state.activeLesson = null;
     },
-    setHoverLesson: (state, action: PayloadAction<HoverLesson>) => {
-      state.hoverLesson = action.payload;
-    },
-    clearHoverLesson: (state) => {
-      state.hoverLesson = null;
-    },
-    changeLessonConfig: (
-      state,
-      action: PayloadAction<{ semester: Semester; newLesson: Lesson }>
-    ) => {
-      const { semester, newLesson } = action.payload;
-      const { moduleCode, lessonType, classNo } = newLesson;
+    changeLessonConfig: (state, action: PayloadAction<Lesson>) => {
+      const currentSem = state.semester;
+      const { moduleCode, lessonType, classNo } = action.payload;
 
       state.activeLesson = null; // Reset activeLesson
-      state.lessons[semester][moduleCode] = {
-        ...state.lessons[semester][moduleCode],
+      state.lessons[currentSem][moduleCode] = {
+        ...state.lessons[currentSem][moduleCode],
         [lessonType]: classNo,
       };
     },
@@ -67,6 +67,18 @@ const timetableSlice = createSlice({
         [moduleCode]: lessonData,
       };
     },
+    setHoverLesson: (state, action: PayloadAction<HoverLesson>) => {
+      state.hoverLesson = action.payload;
+    },
+    clearHoverLesson: (state) => {
+      state.hoverLesson = null;
+    },
+    setModifiedCell: (state, action: PayloadAction<ModifiedCell>) => {
+      state.modifiedCell = action.payload;
+    },
+    clearModifiedCell: (state) => {
+      state.modifiedCell = null;
+    },
   },
 });
 
@@ -78,5 +90,7 @@ export const {
   changeLessonConfig,
   setHoverLesson,
   clearHoverLesson,
+  setModifiedCell,
+  clearModifiedCell,
 } = timetableSlice.actions;
 export default timetableSlice.reducer;

@@ -29,9 +29,9 @@ $font-size-s: 0.85rem !default;
 $font-size-xs: 0.75rem !default;
 $font-size-xxs: 0.65rem !default;
 
-$timetable-day-z-index: 2;
+$timetable-day-z-index: 5;
 $timetable-cell-z-index: 1;
-$timetable-selected-cell-z-index: 1;
+$timetable-selected-cell-z-index: 10;
 
 // Animations
 $fullscreen-duration: 0.375s;

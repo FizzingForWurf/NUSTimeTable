@@ -1,8 +1,9 @@
+import { useEffect, useRef } from 'react';
 import TimetableTimings from './TimetableTimings';
 import styles from './Timetable.scss';
 import { SCHOOLDAYS, calculateStartAndEndOfDayTimings } from 'utils/timeUtils';
-import { useSelector } from 'react-redux';
-import { RootState } from '../../redux/store';
+import { useDispatch, useSelector } from 'react-redux';
+import { AppDispatch, RootState } from '../../redux/store';
 import {
   areOtherClassesAvailable,
   arrangeLessonsForWeek,
@@ -12,6 +13,7 @@ import { flatMapDeep, mapValues, values } from 'lodash';
 import {
   ColoredLesson,
   Lesson,
+  ModifiedCell,
   TimetableArrangement,
 } from '../../types/timetable';
 import {
@@ -20,8 +22,42 @@ import {
 } from '../../utils/moduleUtils';
 import TimetableDay from './TimetableDay';
 import SemesterSwitcher from './SemesterSwitcher';
+import {
+  cancelModifyActiveLesson,
+  clearModifiedCell,
+} from 'redux/TimetableSlice';
+
+/**
+ * When a module is modified, we want to ensure the selected timetable cell
+ * is in approximately the same location when all of the new options are rendered.
+ * This is important for modules with a lot of options which can push the selected
+ * option off screen and disorientate the user.
+ */
+function maintainScrollPosition(
+  container: HTMLElement,
+  modifiedCell: ModifiedCell
+) {
+  const newCell = container.getElementsByClassName(modifiedCell.className)[0];
+  if (!newCell) return;
+
+  const previousPosition = modifiedCell.position;
+  const currentPosition = newCell.getBoundingClientRect();
+
+  // We try to ensure the cell is in the same position on screen, so we calculate
+  // the new position by taking the difference between the two positions and
+  // adding it to the scroll position of the scroll container, which is the
+  // window for the y axis and the timetable container for the x axis
+  const x = currentPosition.left - previousPosition.left + window.scrollX;
+  const y = currentPosition.top - previousPosition.top + window.scrollY;
+
+  window.scroll(0, y);
+  container.scrollLeft = x; // eslint-disable-line no-param-reassign
+}
 
 export const Timetable = () => {
+  const timetableWindowRef = useRef<HTMLDivElement>(null);
+  const dispatch = useDispatch<AppDispatch>();
+
   const modules = useSelector((state: RootState) => state.timetable.modules);
   const timetableConfig = useSelector(
     (state: RootState) => state.timetable.lessons
@@ -32,9 +68,19 @@ export const Timetable = () => {
   const activeLesson = useSelector(
     (state: RootState) => state.timetable.activeLesson
   );
+  const modifiedCell = useSelector(
+    (state: RootState) => state.timetable.modifiedCell
+  );
 
   // const hidden = useSelector((state: RootState) => state.timetable.hidden);
   // const hiddenModules = hidden[currentSem];
+
+  useEffect(() => {
+    if (modifiedCell && timetableWindowRef.current) {
+      maintainScrollPosition(timetableWindowRef.current, modifiedCell);
+      dispatch(clearModifiedCell());
+    }
+  });
 
   // Add lessons from modules into timetableConfig
   const timetableWithLessons = populateSemTimetableWithLessons(
@@ -94,7 +140,6 @@ export const Timetable = () => {
 
   // Arrange all lessons by day and resolve any overlapping modules
   const arrangedLessons = arrangeLessonsForWeek(coloredTimetableLessons);
-  console.log(arrangedLessons);
 
   // Add modifiable flag to arranged lessons
   const arrangedLessonsWithModifiableFlag: TimetableArrangement = mapValues(
@@ -127,8 +172,15 @@ export const Timetable = () => {
   const EMPTY_ROW_LESSONS = [[]];
 
   return (
-    <div className={styles.timetableWrapper}>
-      <div className={styles.timetableScroll}>
+    <div
+      className={styles.timetableWrapper}
+      onClick={() => dispatch(cancelModifyActiveLesson())}
+      onKeyUp={(e) => {
+        e.key === 'Escape' && dispatch(cancelModifyActiveLesson());
+      }}
+      role="presentation" // Address eslint: no-static-element-interactions
+    >
+      <div className={styles.timetableScroll} ref={timetableWindowRef}>
         <div className={styles.timetableContainer}>
           <TimetableTimings
             startingIndex={startingIndex}

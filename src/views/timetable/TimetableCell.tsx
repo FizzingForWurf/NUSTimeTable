@@ -1,5 +1,9 @@
-import { HoverLesson, ModifiableLesson } from 'types/timetable';
-import { LESSON_TYPE_ABBREV, getHoverLesson } from 'utils/timetableUtils';
+import { HoverLesson, ModifiableLesson, ModifiedCell } from 'types/timetable';
+import {
+  LESSON_TYPE_ABBREV,
+  getHoverLesson,
+  getLessonIdentifier,
+} from 'utils/timetableUtils';
 import styles from './TimetableCell.scss';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from 'redux/store';
@@ -9,6 +13,7 @@ import {
   clearHoverLesson,
   modifyActiveLesson,
   setHoverLesson,
+  setModifiedCell,
 } from 'redux/TimetableSlice';
 import { isEqual } from 'lodash';
 import classNames from 'classnames';
@@ -38,37 +43,46 @@ const TimetableCell = (props: TimetableCellProps) => {
       : dispatch(clearHoverLesson());
   };
 
-  const handleTimetableCellClick = () => {
-    // Ignore lessons that cannot be modified
-    if (!props.lesson.isModifiable) return;
+  const handleTimetableCellClick = (e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevents onClick on timetable background
+    if (!props.lesson.isModifiable) return; // Ignore lessons that cannot be modified
 
     if (props.lesson.isActive) {
       // Clicking on activeLesson means to cancel changing it
       dispatch(cancelModifyActiveLesson());
+      // Reset scroll position
+      window.scrollTo(0, 0);
     } else if (props.lesson.isAvailable) {
       // Changing to available lesson not is NOT active
-      dispatch(
-        changeLessonConfig({
-          semester: 1,
-          newLesson: props.lesson,
-        })
-      );
+      dispatch(changeLessonConfig(props.lesson));
+      // Reset scroll position
+      window.scrollTo(0, 0);
     } else {
+      const rect = e.currentTarget.getBoundingClientRect();
+      const modifiedCell: ModifiedCell = {
+        className: getLessonIdentifier(props.lesson),
+        position: { left: rect.left, top: rect.top },
+      };
       // Selecting active lesson to modify lesson
       dispatch(modifyActiveLesson(props.lesson));
+      dispatch(setModifiedCell(modifiedCell));
     }
   };
 
-  const timetableCellStyle = classNames(styles.baseCell, {
-    hoverable: !!props.lesson.isModifiable,
-    [styles.clickable]: !!props.lesson.isModifiable,
-    [styles.available]: props.lesson.isAvailable,
-    [styles.active]: props.lesson.isActive,
-    // Local hover style for the timetable planner timetable,
-    [styles.hover]: isHoveredOver,
-    // Global hover style for module page timetable
-    hover: isHoveredOver,
-  });
+  const timetableCellStyle = classNames(
+    styles.baseCell,
+    getLessonIdentifier(props.lesson), // Label to find this lesson to maintain scroll position
+    {
+      hoverable: !!props.lesson.isModifiable,
+      [styles.clickable]: !!props.lesson.isModifiable,
+      [styles.available]: props.lesson.isAvailable,
+      [styles.active]: props.lesson.isActive,
+      // Local hover style for the timetable planner timetable,
+      [styles.hover]: isHoveredOver,
+      // Global hover style for module page timetable
+      hover: isHoveredOver,
+    }
+  );
 
   return (
     <Cell
