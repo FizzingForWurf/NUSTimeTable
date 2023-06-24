@@ -7,6 +7,9 @@ import { firebaseCheckAuthState } from './firebase/FirebaseAuth';
 import { signInUser, signOutUser } from './redux/UserSlice';
 import { AppDispatch } from './redux/store';
 
+// Import all scss classnames (NOT as module)
+import 'styles/main.scss';
+
 export function App() {
   const dispatch = useDispatch<AppDispatch>();
 
