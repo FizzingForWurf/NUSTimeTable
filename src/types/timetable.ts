@@ -18,17 +18,28 @@ export type ModulesMap = {
   [moduleCode: string]: Module;
 };
 
-//  ModuleLessonConfig is a mapping of lessonType to ClassNo for a module.
+/** Stores position of last modified cell to maintain scroll position.
+ * Use `className` as descriptor to find the cell in DOM tree.
+ */
+export type ModifiedCell = {
+  className: string;
+  position: {
+    left: number;
+    top: number;
+  };
+};
+
+/** ModuleLessonConfig is a mapping of lessonType to ClassNo for a module. */
 export type ModuleLessonConfig = {
   [lessonType: string]: ClassNo;
 };
 
-// SemTimetableConfig is the timetable data for each semester.
+/** SemTimetableConfig is the timetable data for each semester. */
 export type SemTimetableConfig = {
   [moduleCode: string]: ModuleLessonConfig;
 };
 
-//  ModuleLessonConfigWithLessons is a mapping of lessonType to an array of Lessons for a module.
+/** Lesson stores moduleCode and title together with RawLesson details */
 export type Lesson = RawLesson & {
   moduleCode: ModuleCode;
   title: ModuleTitle;
@@ -51,7 +62,18 @@ export type ModuleLessonConfigWithLessons = {
   [lessonType: string]: Lesson[];
 };
 
-// SemTimetableConfig is the timetable data for each semester with lessons data.
+/** SemTimetableConfig is the timetable data for each semester with lessons data.
+ * ```
+ * {
+ *    "CS2040":
+ *        "Lecture": [Lesson1, Lesson2, Lesson3]
+ *        "Lab": [Lesson1, Lesson2]
+ *        "Tutorial": [Lesson1]
+ *    "CS2030":
+ *        "Lecture": [Lesson1]
+ * }
+ * ```
+ */
 export type SemTimetableConfigWithLessons = {
   [moduleCode: string]: ModuleLessonConfigWithLessons;
 };

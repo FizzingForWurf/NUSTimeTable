@@ -200,10 +200,18 @@ export function groupLessonsByDay(
 }
 
 /**
- * Determines if two lessons overlap:
+ * Determines if two lessons overlap. Conditions:
+ *
+ * - Both on same day AND
+ * - lesson1 startTime before lesson2 endTime AND
+ * - lesson1 endTime after lesson2 startTime
+ *
+ * Assume that lesson1 startTime should be earlier than lesson2 startTime
+ * since the lessons are sorted by startTime.
+ * See: `arrangeLessonsWithinDay`
  * @param lesson1
  * @param lesson2
- * @returns boolean of whether lesson1 and lesson2 overlap
+ * @returns true if overlap and false otherwise
  */
 export function doLessonsOverlap(lesson1: Lesson, lesson2: Lesson): boolean {
   return (
@@ -230,17 +238,19 @@ export function arrangeLessonsWithinDay(
   lessons: ColoredLesson[]
 ): TimetableDayArrangement {
   const rows: TimetableDayArrangement = [[]];
-  if (isEmpty(lessons)) {
-    return rows;
-  }
+  if (isEmpty(lessons)) return rows;
+
+  // Sort by startTime then by classNo
   const sortedLessons = lessons.sort((a, b) => {
     const timeDiff = a.startTime.localeCompare(b.startTime);
     return timeDiff !== 0 ? timeDiff : a.classNo.localeCompare(b.classNo);
   });
+
+  // Check each lesson if it overlaps with existing classes already populated in rows
   sortedLessons.forEach((lesson: ColoredLesson) => {
     for (let i = 0; i < rows.length; i++) {
       const rowLessons: ColoredLesson[] = rows[i];
-      const previousLesson = last(rowLessons);
+      const previousLesson = last(rowLessons); // Only check last lesson since all classes are sorted
       if (!previousLesson || !doLessonsOverlap(previousLesson, lesson)) {
         // Lesson does not overlap with any Lesson in the row. Add it to row.
         rowLessons.push(lesson);
