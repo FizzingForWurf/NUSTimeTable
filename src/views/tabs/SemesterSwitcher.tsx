@@ -11,6 +11,9 @@ const SemesterSwitcher = () => {
   const currentSem = useSelector(
     (state: RootState) => state.timetable.semester
   );
+  const activeLesson = useSelector(
+    (state: RootState) => state.timetable.activeLesson
+  );
 
   const handleSwitchSemester = (offset: number) => () => {
     const newSemester = currentSem + offset;
@@ -19,23 +22,22 @@ const SemesterSwitcher = () => {
 
   return (
     <Box
-      sx={{
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-      }}
+      display="flex"
+      justifyContent="center"
+      alignItems="center"
+      width="auto"
     >
       <IconButton
-        disabled={!isValidSemester(currentSem - 1)}
+        disabled={!isValidSemester(currentSem - 1) || !!activeLesson}
         onClick={handleSwitchSemester(-1)}
       >
         <ChevronLeft />
       </IconButton>
-      <Typography variant="h6" sx={{ px: 2, py: 1 }}>
+      <Typography variant="overline" sx={{ px: 2, py: 1, fontSize: 14 }}>
         {semesterStringName[currentSem]}
       </Typography>
       <IconButton
-        disabled={!isValidSemester(currentSem + 1)}
+        disabled={!isValidSemester(currentSem + 1) || !!activeLesson}
         onClick={handleSwitchSemester(1)}
       >
         <ChevronRight />
