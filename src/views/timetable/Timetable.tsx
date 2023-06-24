@@ -21,11 +21,11 @@ import {
   getModuleRawLessons,
 } from '../../utils/moduleUtils';
 import TimetableDay from './TimetableDay';
-import SemesterSwitcher from './SemesterSwitcher';
 import {
   cancelModifyActiveLesson,
   clearModifiedCell,
 } from 'redux/TimetableSlice';
+import classNames from 'classnames';
 
 /**
  * When a module is modified, we want to ensure the selected timetable cell
@@ -173,7 +173,8 @@ export const Timetable = () => {
 
   return (
     <div
-      className={styles.timetableWrapper}
+      // Inject timetable color theme here!
+      className={classNames(styles.timetableWrapper, 'theme-ashes')}
       onClick={() => dispatch(cancelModifyActiveLesson())}
       onKeyUp={(e) => {
         e.key === 'Escape' && dispatch(cancelModifyActiveLesson());
@@ -202,7 +203,6 @@ export const Timetable = () => {
           </ol>
         </div>
       </div>
-      <SemesterSwitcher />
     </div>
   );
 };

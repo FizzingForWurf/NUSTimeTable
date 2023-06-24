@@ -19,7 +19,6 @@ $cell-border-radius: 6px;
   animation-duration: $desktop-entering-duration;
 
   &:hover,
-  &.hover,
   &:focus {
     outline: none;
   }
@@ -33,6 +32,11 @@ $cell-border-radius: 6px;
 .clickable {
   border-radius: $cell-border-radius;
   cursor: pointer;
+}
+
+.coloredCell {
+  border-width: 0 0 0.2rem;
+  border-style: solid;
 }
 
 .available {

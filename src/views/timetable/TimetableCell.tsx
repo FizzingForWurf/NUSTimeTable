@@ -69,9 +69,13 @@ const TimetableCell = (props: TimetableCellProps) => {
     }
   };
 
+  // const colorChooser = [styles.color_1];
+
   const timetableCellStyle = classNames(
     styles.baseCell,
+    styles.coloredCell,
     getLessonIdentifier(props.lesson), // Label to find this lesson to maintain scroll position
+    `color-${props.lesson.colorIndex}`,
     {
       hoverable: !!props.lesson.isModifiable,
       [styles.clickable]: !!props.lesson.isModifiable,
