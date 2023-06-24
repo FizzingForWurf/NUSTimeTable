@@ -6,6 +6,7 @@ import {
   Lesson,
   ModifiedCell,
   ModulesMap,
+  SemesterColorMap,
   TimetableConfig,
 } from '../types/timetable';
 import { randomModuleLessonConfig } from '../utils/timetableUtils';
@@ -26,6 +27,8 @@ const initialState = {
   lessons: {} as TimetableConfig,
   /** Modules that are hidden by user */
   hidden: {} as HiddenModulesMap,
+  /** Colors of each module shown in timetable */
+  colors: {} as SemesterColorMap,
 };
 
 const timetableSlice = createSlice({

@@ -11,6 +11,7 @@ import {
 } from 'utils/timetableUtils';
 import { flatMapDeep, mapValues, values } from 'lodash';
 import {
+  ColorMapping,
   ColoredLesson,
   Lesson,
   ModifiedCell,
@@ -26,6 +27,7 @@ import {
   clearModifiedCell,
 } from 'redux/TimetableSlice';
 import classNames from 'classnames';
+import { fillColorMapping } from 'utils/ColorUtils';
 
 /**
  * When a module is modified, we want to ensure the selected timetable cell
@@ -131,10 +133,14 @@ export const Timetable = () => {
   }
 
   // Inject color into module
+  const colors = fillColorMapping(
+    timetableConfig[currentSem] || {},
+    {} as ColorMapping
+  );
   const coloredTimetableLessons = timetableLessons.map(
     (lesson: Lesson): ColoredLesson => ({
       ...lesson,
-      colorIndex: 1, // TODO: Implement colors later
+      colorIndex: colors[lesson.moduleCode],
     })
   );
 
