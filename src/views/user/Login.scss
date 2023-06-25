@@ -1,7 +1,21 @@
+@use '../../styles/breakpoints' as *;
+
 .loginContainer {
   width: 40%;
   padding: 16px;
   margin: auto;
+
+  @include media-breakpoint-between(md, xl) {
+    width: 55%;
+  }
+
+  @include media-breakpoint-between(sm, md) {
+    width: 70%;
+  }
+
+  @include media-breakpoint-down(sm) {
+    width: 100%;
+  }
 }
 
 .loginButton {

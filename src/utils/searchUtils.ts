@@ -1,5 +1,5 @@
 import algoliasearch from 'algoliasearch';
-import { ModuleInformation } from '../types/modules';
+import { AutoCompleteResponse, ModuleInformation } from '../types/modules';
 
 const index_name = 'modules';
 const app_id = process.env.ALGOLIA_APP_ID || '';
@@ -9,14 +9,11 @@ const client = algoliasearch(app_id, api_key);
 const index = client.initIndex(index_name);
 
 const AUTOCOMPLETE_CACHE_LIMIT = 10;
-const autocompleteCache = new Map<string, ModuleInformation[]>();
+const autocompleteCache = new Map<string, AutoCompleteResponse>();
 
 export const autocompleteModule = async (query: string) => {
   if (autocompleteCache.has(query)) {
-    console.log('CACHE:', query);
-    console.log(Array.from(autocompleteCache.keys()));
-    console.log(autocompleteCache.get(query));
-    return autocompleteCache.get(query) || [];
+    return autocompleteCache.get(query);
   }
 
   try {
@@ -24,12 +21,12 @@ export const autocompleteModule = async (query: string) => {
       hitsPerPage: 10,
     });
     const data = response.hits.map((module) => module as ModuleInformation);
-    if (data.length > 0) cacheAutocompleteResults(query, data);
-
-    console.log('ALGOLIA:', query);
-    console.log(data);
-
-    return data;
+    const result: AutoCompleteResponse = {
+      hitsNo: response.nbHits,
+      data: data,
+    };
+    if (data.length > 0) cacheAutocompleteResults(query, result);
+    return result;
   } catch (error) {
     throw error;
   }
@@ -37,7 +34,7 @@ export const autocompleteModule = async (query: string) => {
 
 export const cacheAutocompleteResults = (
   query: string,
-  mod: ModuleInformation[]
+  mod: AutoCompleteResponse
 ) => {
   if (autocompleteCache.size >= AUTOCOMPLETE_CACHE_LIMIT) {
     const queries = Array.from(autocompleteCache.keys());

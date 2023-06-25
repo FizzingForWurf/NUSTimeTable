@@ -1,4 +1,4 @@
-@import './_variables.scss';
+@use './_variables.scss' as *;
 
 $timetable-padding: 16px;
 $timetable-min-width: $timetable-row-height * 16;

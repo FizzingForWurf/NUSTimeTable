@@ -1,0 +1,14 @@
+//TODO: Change to @use when bootstrap decides to migrate to latest
+//TODO: version of dart sass where @import is deprecated
+
+// @use '../../node_modules/bootstrap/scss/variables' as *;
+// @use '../../node_modules/bootstrap/scss/mixins' as *;
+// @use '../../node_modules/bootstrap/scss/functions' as *;
+
+// @forward '../../node_modules/bootstrap/scss/functions';
+// @forward '../../node_modules/bootstrap/scss/variables';
+// @forward '../../node_modules/bootstrap/scss/mixins';
+
+@import '../../node_modules/bootstrap/scss/functions';
+@import '../../node_modules/bootstrap/scss/variables';
+@import '../../node_modules/bootstrap/scss/mixins';

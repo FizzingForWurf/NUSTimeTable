@@ -20,7 +20,17 @@ import {
 } from '../../utils/moduleUtils';
 import { addModule } from '../../redux/TimetableSlice';
 
-const MoreButton = ({ semesters }: { semesters: number[] }) => {
+const MoreButton = ({
+  moduleCode,
+  semesters,
+}: {
+  moduleCode: string;
+  semesters: number[];
+}) => {
+  const dispatch = useDispatch<AppDispatch>();
+  const [loading, setLoading] = useState<boolean[]>(
+    Array(semesters.length).fill(false)
+  );
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const handleMoreClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
@@ -29,12 +39,16 @@ const MoreButton = ({ semesters }: { semesters: number[] }) => {
     setAnchorEl(null);
   };
 
-  const handleAddModuleClick = async () => {
-    // const moduleInfo = await getModuleInfo(moduleCode, setIsLoading);
-    // if (moduleInfo !== undefined) {
-    //   // Add moduleInfo to timetable redux slice
-    //   console.log(moduleInfo);
-    // }
+  const handleAddModuleClick = (sem: number, index: number) => async () => {
+    const setIsLoading = (newState: boolean) => {
+      setLoading(
+        loading.map((oldState, i) => (i === index ? newState : oldState))
+      );
+    };
+    const moduleInfo = await getModuleInfo(moduleCode, setIsLoading);
+    if (moduleInfo) {
+      dispatch(addModule({ semester: sem, module: moduleInfo }));
+    }
   };
 
   return (
@@ -64,10 +78,14 @@ const MoreButton = ({ semesters }: { semesters: number[] }) => {
           horizontal: 'right',
         }}
       >
-        {semesters.map((sem) => {
+        {semesters.map((sem, index) => {
           return (
-            <MenuItem key={sem} onClick={handleAddModuleClick}>
-              Add to {semesterStringName[sem]}
+            <MenuItem key={sem} onClick={handleAddModuleClick(sem, index)}>
+              {loading[index] ? (
+                <CircularProgress size={24} thickness={5} color="inherit" />
+              ) : (
+                <Typography>Add to {semesterStringName[sem]}</Typography>
+              )}
             </MenuItem>
           );
         })}
@@ -95,8 +113,6 @@ const AddModuleButton = ({
   const handleAddClick = async () => {
     const moduleInfo = await getModuleInfo(moduleCode, setIsLoading);
     if (moduleInfo !== undefined) {
-      // Add moduleInfo to timetable redux slice
-      console.log(moduleInfo);
       dispatch(addModule({ semester: mainSemester, module: moduleInfo }));
     }
   };
@@ -139,7 +155,7 @@ const AddModuleButton = ({
             variant="middle"
             sx={{ borderRightWidth: 1, bgcolor: 'white' }}
           />
-          <MoreButton semesters={otherSemesters} />
+          <MoreButton moduleCode={moduleCode} semesters={otherSemesters} />
         </>
       )}
     </Card>

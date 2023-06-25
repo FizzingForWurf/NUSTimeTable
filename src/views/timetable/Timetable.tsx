@@ -180,7 +180,7 @@ export const Timetable = () => {
   return (
     <div
       // Inject timetable color theme here!
-      className={classNames(styles.timetableWrapper, 'theme-ashes')}
+      className={classNames(styles.timetableWrapper, 'theme-eighties')}
       onClick={() => dispatch(cancelModifyActiveLesson())}
       onKeyUp={(e) => {
         e.key === 'Escape' && dispatch(cancelModifyActiveLesson());

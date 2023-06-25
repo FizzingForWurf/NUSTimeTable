@@ -1,0 +1,59 @@
+@use '../../styles/breakpoints' as *;
+@use '../../styles/constants/z-index' as z;
+@use '../../styles/constants/components' as c;
+
+.searchBarWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-left: 0;
+  z-index: z.$search-bar-z-index;
+
+  width: c.$search-bar-width;
+  @include media-breakpoint-down(sm) {
+    width: 100%;
+  }
+}
+
+// Add space at side when back button not shown
+// Occurs when results not shown
+.addSideSpacing {
+  margin-left: 0px;
+
+  @include media-breakpoint-down(sm) {
+    margin-left: 16px;
+  }
+}
+
+.searchIconWrapper {
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.backButton {
+  display: none;
+  margin: 0 6px;
+  z-index: z.$search-bar-back-z-index;
+}
+
+// Show back button only when:
+// Search results shown AND window is mobile
+.showBackButton {
+  display: none;
+
+  @include media-breakpoint-down(sm) {
+    display: flex;
+  }
+}
+
+.searchResultsBackground {
+  position: absolute;
+  height: 100vh;
+  width: 100vw;
+  top: 0;
+  left: 0;
+  z-index: z.$search-bar-bg-z-index;
+}

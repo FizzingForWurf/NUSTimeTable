@@ -1,19 +1,19 @@
-@import 'mixins';
-@import 'constants/animation';
-@import 'constants/colors';
+@use 'mixins';
+@use 'constants/animation' as anim;
+@use 'constants/colors' as c;
 
 :global .hoverable {
-  transition: background-color $desktop-entering-duration
-    $material-deceleration-curve;
+  transition: background-color anim.$desktop-entering-duration
+    anim.$material-deceleration-curve;
 }
 
-@each $name, $colors in $nusmods-theme-colors {
+@each $name, $colors in c.$nusmods-theme-colors {
   :global .theme-#{$name} {
     $index: 0;
 
     @each $color in $colors {
       .color-#{$index} {
-        @include color($color);
+        @include mixins.color($color);
       }
 
       $index: $index + 1; /* stylelint-disable-line order/order */
