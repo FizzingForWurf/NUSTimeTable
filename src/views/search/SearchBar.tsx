@@ -1,4 +1,4 @@
-import { Close, Search } from '@mui/icons-material';
+import { ArrowBack, Close, Search } from '@mui/icons-material';
 import { Box, CircularProgress, IconButton, InputBase } from '@mui/material';
 import { styled, alpha } from '@mui/material/styles';
 import { ChangeEvent, useState } from 'react';
@@ -6,33 +6,20 @@ import SearchBarResults from './SearchResults';
 import { searchModule } from '../../redux/SearchSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../../redux/store';
+import styles from './SearchBar.scss';
+import classNames from 'classnames';
 
-const searchBarWidth = '50ch';
 const SearchBarWrapper = styled('div')(({ theme }) => ({
-  position: 'relative',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'space-between',
   borderRadius: theme.shape.borderRadius,
   backgroundColor: alpha(theme.palette.common.white, 0.15),
   '&:hover': {
     backgroundColor: alpha(theme.palette.common.white, 0.25),
   },
   marginRight: theme.spacing(2),
-  marginLeft: 0,
-  width: '100%',
-  [theme.breakpoints.up('sm')]: {
-    width: searchBarWidth,
-  },
-  zIndex: 10,
 }));
 
 const SearchIconWrapper = styled('div')(({ theme }) => ({
   padding: theme.spacing(0, 1.5),
-  pointerEvents: 'none',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
 }));
 
 const StyledInputBase = styled(InputBase)(({ theme }) => ({
@@ -54,16 +41,7 @@ const SearchResultsBackground = ({
   if (!show) return <></>;
 
   return (
-    <Box
-      onClick={hideResults}
-      sx={{
-        position: 'absolute',
-        height: '100vh',
-        width: '100vw',
-        top: 0,
-        left: 0,
-      }}
-    ></Box>
+    <Box className={styles.searchResultsBackground} onClick={hideResults} />
   );
 };
 
@@ -103,14 +81,29 @@ const SearchBar = () => {
 
   return (
     <>
-      <SearchBarWrapper>
-        <SearchIconWrapper>
+      <div
+        className={classNames(styles.backButton, {
+          [styles.showBackButton]: showResults,
+        })}
+      >
+        <IconButton onClick={handleCloseResults}>
+          <ArrowBack sx={{ color: 'white', opacity: 0.6 }} />
+        </IconButton>
+      </div>
+
+      <SearchBarWrapper
+        className={classNames(styles.searchBarWrapper, {
+          [styles.addSideSpacing]: !showResults,
+        })}
+      >
+        <SearchIconWrapper className={styles.searchIconWrapper}>
           {isLoading ? (
             <CircularProgress color="inherit" size={18} thickness={5} />
           ) : (
             <Search />
           )}
         </SearchIconWrapper>
+
         <StyledInputBase
           placeholder="Search…"
           inputProps={{ 'aria-label': 'search' }}
@@ -131,7 +124,10 @@ const SearchBar = () => {
         hideResults={handleCloseResults}
       />
 
-      <SearchBarResults showResults={showResults} />
+      <SearchBarResults
+        showResults={showResults}
+        closeResults={handleCloseResults}
+      />
     </>
   );
 };

@@ -22,9 +22,10 @@ export function App() {
   }, []);
 
   return (
-    <Navbar>
+    <div>
+      <Navbar />
       <Paths />
       <Toaster position="bottom-center" />
-    </Navbar>
+    </div>
   );
 }
