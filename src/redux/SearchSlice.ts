@@ -1,10 +1,11 @@
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { PayloadAction, createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { autocompleteModule } from '../utils/searchUtils';
-import { ModuleInformation } from '../types/modules';
+import { AutoCompleteResponse } from '../types/modules';
 
 const initialState = {
   isLoading: false,
-  searchResults: [] as ModuleInformation[],
+  searchNumber: 0,
+  searchResults: null as AutoCompleteResponse | null,
   errorMsg: '',
 };
 
@@ -18,7 +19,11 @@ export const searchModule = createAsyncThunk(
 const searchSlice = createSlice({
   name: 'search',
   initialState,
-  reducers: {},
+  reducers: {
+    updateSearchResultNo: (state, action: PayloadAction<number>) => {
+      state.searchNumber = action.payload;
+    },
+  },
   extraReducers: (builder) => {
     builder.addCase(searchModule.pending, (state) => {
       state.isLoading = true;
@@ -26,17 +31,17 @@ const searchSlice = createSlice({
     });
     builder.addCase(searchModule.fulfilled, (state, action) => {
       state.isLoading = false;
-      state.searchResults.length = 0;
-      state.searchResults.push(...(action.payload || []));
+      state.searchResults = action.payload || null;
       state.errorMsg = '';
     });
     builder.addCase(searchModule.rejected, (state, action) => {
       state.isLoading = false;
       state.errorMsg = action.error.message || '';
-      state.searchResults = [];
+      state.searchResults = null;
       console.log(action.error);
     });
   },
 });
 
+export const { updateSearchResultNo } = searchSlice.actions;
 export default searchSlice.reducer;

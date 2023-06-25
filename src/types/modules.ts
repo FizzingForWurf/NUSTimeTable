@@ -163,6 +163,11 @@ export type ModuleCondensed = Readonly<{
   semesters: readonly number[];
 }>;
 
+export type AutoCompleteResponse = {
+  hitsNo: number;
+  data: ModuleInformation[];
+};
+
 /**
  * This format is returned from the module information endpoint
  * Subset of Module object that contains the properties that are needed for module search
