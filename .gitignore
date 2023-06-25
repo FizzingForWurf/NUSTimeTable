@@ -6,7 +6,7 @@ node_modules
 .DS_Store
 
 # Firebase hosting cache file
-*.cache
+.firebase
 
 # Auto generated scss d.ts files
 declarations
