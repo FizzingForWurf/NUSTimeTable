@@ -206,14 +206,15 @@ export function groupLessonsByDay(
  * - lesson1 startTime before lesson2 endTime AND
  * - lesson1 endTime after lesson2 startTime
  *
- * Assume that lesson1 startTime should be earlier than lesson2 startTime
- * since the lessons are sorted by startTime.
  * See: `arrangeLessonsWithinDay`
  * @param lesson1
  * @param lesson2
  * @returns true if overlap and false otherwise
  */
-export function doLessonsOverlap(lesson1: Lesson, lesson2: Lesson): boolean {
+export function doLessonsOverlap(
+  lesson1: RawLesson,
+  lesson2: RawLesson
+): boolean {
   return (
     lesson1.day === lesson2.day &&
     lesson1.startTime < lesson2.endTime &&

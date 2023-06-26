@@ -9,6 +9,7 @@ import {
 } from './modules';
 
 // Mapping of module to color index [0, NUM_DIFFERENT_COLORS)
+export type ColorIndex = number;
 export type ColorMapping = { [moduleCode: string]: ColorIndex };
 export type SemesterColorMap = { [semester: string]: ColorMapping };
 export type HiddenModulesMap = { [semester: string]: ModuleCode[] };
@@ -103,5 +104,3 @@ export type HoverLesson = {
   readonly moduleCode: ModuleCode;
   readonly lessonType: LessonType;
 };
-
-export type ColorIndex = number;
