@@ -5,7 +5,7 @@ import { useState } from 'react';
 import ConditionsTab from './conditions/ConditionsTab';
 
 const MODULE_TAB = 'modules';
-const TIMETABLE_TAB = 'timetable';
+const TIMETABLE_TAB = 'timetables';
 
 const TimetableTabs = () => {
   const [tabValue, setTabValue] = useState(MODULE_TAB);
@@ -26,8 +26,9 @@ const TimetableTabs = () => {
       </Box>
 
       <TabPanel value={MODULE_TAB}>modules</TabPanel>
-      <TabPanel value={TIMETABLE_TAB}>timetable</TabPanel>
-      <ConditionsTab startFabAnimation={tabValue === TIMETABLE_TAB} />
+      <TabPanel value={TIMETABLE_TAB}>
+        <ConditionsTab showFab={tabValue === TIMETABLE_TAB} />
+      </TabPanel>
     </TabContext>
   );
 };
