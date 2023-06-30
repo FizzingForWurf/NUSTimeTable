@@ -13,32 +13,17 @@ import {
 } from '@mui/material';
 import { AccountCircle } from '@mui/icons-material';
 import SearchBar from './search/SearchBar';
-import { ReactNode } from 'react';
+import styles from './Navbar.scss';
 
-const Navbar = ({ children }: { children: ReactNode }) => {
+const Navbar = () => {
   const navigate = useNavigate();
   const curUser = useSelector((state: RootState) => state.user.user);
 
   return (
-    <Box
-      sx={{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'start',
-        overflow: 'hidden', // Remove horizontal scroll bar
-      }}
-    >
+    <div className={styles.appBarWrapper}>
       <CssBaseline />
-      <AppBar
-        position="fixed"
-        sx={{
-          zIndex: (theme) => theme.zIndex.drawer + 1,
-          minHeight: 64,
-          display: 'flex',
-          justifyContent: 'center',
-        }}
-      >
-        <Toolbar>
+      <AppBar position="fixed" className={styles.appBar}>
+        <Toolbar disableGutters>
           <SearchBar />
 
           <Typography
@@ -94,8 +79,7 @@ const Navbar = ({ children }: { children: ReactNode }) => {
         </Toolbar>
       </AppBar>
       <Toolbar />
-      {children}
-    </Box>
+    </div>
   );
 };
 

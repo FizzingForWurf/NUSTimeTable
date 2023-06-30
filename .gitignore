@@ -3,6 +3,10 @@ node_modules
 
 .vs
 .vscode
+.DS_Store
+
+# Firebase hosting cache file
+.firebase
 
 # Auto generated scss d.ts files
 declarations

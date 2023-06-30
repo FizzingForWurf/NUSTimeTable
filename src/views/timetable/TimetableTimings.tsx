@@ -1,6 +1,6 @@
 import { range } from 'lodash';
 
-import { convertIndexToTime } from '../../utils/timify';
+import { convertIndexToTime } from '../../utils/timeUtils';
 import styles from './TimetableTimings.scss';
 
 type Props = {

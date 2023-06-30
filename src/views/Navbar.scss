@@ -1,24 +1,22 @@
-.navbar {
-  background-color: cadetblue;
-  padding: 12px 24px;
+@use '../styles/breakpoints' as *;
+@use '../styles/constants/components' as c;
+
+.appBarWrapper {
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
+  align-items: start;
+  overflow: hidden; // Remove horizontal scroll bar
+}
 
-  p {
-    margin: 0;
-    padding: 8px;
-    font-weight: bold;
+.appBar {
+  padding: 0 16px;
+  height: c.$app-bar-height;
+  display: flex;
+  justify-content: center;
+  background-color: red;
+
+  @include media-breakpoint-down(sm) {
+    padding: 0px;
+    padding-right: 16px;
   }
-}
-
-a {
-  text-decoration: none;
-  background-color: #eee;
-  padding: 8px;
-  margin-right: 16px;
-}
-
-a:hover {
-  opacity: 50%;
-  font-weight: bold;
 }
