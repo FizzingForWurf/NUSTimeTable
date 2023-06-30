@@ -3,7 +3,9 @@ import { Divider, Fab, Zoom, useTheme } from '@mui/material';
 import ConditionConfig from './ConditionConfig';
 import { useSelector } from 'react-redux';
 import { RootState } from 'redux/store';
-import { checkConflictModule } from 'utils/conditionsUtils';
+import { setupTimetableGenerationData } from 'utils/conditionsUtils';
+import { findSuitableTimetableConfig } from 'utils/generateTimetableUtils';
+import { size } from 'lodash';
 
 type ConditionsTabProps = {
   showFab: boolean;
@@ -25,7 +27,17 @@ const ConditionsTab = (props: ConditionsTabProps) => {
   };
 
   const handleGenerateClick = () => {
-    checkConflictModule(currentSem, modules, timetableConfig[currentSem] || {});
+    const curSemTimetable = timetableConfig[currentSem] || {};
+    if (size(curSemTimetable) < 2) return;
+
+    const data = setupTimetableGenerationData(
+      currentSem,
+      modules,
+      curSemTimetable
+    );
+
+    const timetableResult = findSuitableTimetableConfig(data);
+    console.log(timetableResult);
   };
 
   return (
