@@ -3,7 +3,7 @@ import { Divider, Fab, Zoom, useTheme } from '@mui/material';
 import ConditionConfig from './ConditionConfig';
 import { useSelector } from 'react-redux';
 import { RootState } from 'redux/store';
-import { checkConflictModule } from 'utils/ConditionsUtils';
+import { checkConflictModule } from 'utils/conditionsUtils';
 
 type ConditionsTabProps = {
   showFab: boolean;

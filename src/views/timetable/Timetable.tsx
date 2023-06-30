@@ -27,7 +27,7 @@ import {
   clearModifiedCell,
 } from 'redux/TimetableSlice';
 import classNames from 'classnames';
-import { fillColorMapping } from 'utils/ColorUtils';
+import { fillColorMapping } from 'utils/colorUtils';
 
 /**
  * When a module is modified, we want to ensure the selected timetable cell
