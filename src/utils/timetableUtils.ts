@@ -1,5 +1,5 @@
 import {
-  //   castArray,
+  castArray,
   //   difference,
   //   each,
   first,
@@ -10,14 +10,14 @@ import {
   isEmpty,
   isEqual,
   last,
-  //   map,
+  map,
   mapValues,
   //   omitBy,
   //   partition,
-  //   pick,
+  pick,
   range,
   sample,
-  // values,
+  values,
 } from 'lodash';
 // import { addDays, min as minDate, parseISO } from 'date-fns';
 
@@ -51,6 +51,7 @@ import {
 import { getTimeAsDate } from './timeUtils';
 // import { getModuleSemesterData, getModuleTimetable } from './modules';
 // import { deltas } from './array';
+import qs from 'querystring';
 
 type lessonTypeAbbrev = { [lessonType: string]: string };
 export const LESSON_TYPE_ABBREV: lessonTypeAbbrev = {
@@ -444,40 +445,40 @@ export function getEndTimeAsDate(
 // }
 
 // Get information for all modules present in a semester timetable config
-// export function getSemesterModules(
-//   timetable: { [moduleCode: string]: unknown },
-//   modules: ModulesMap
-// ): Module[] {
-//   return values(pick(modules, Object.keys(timetable)));
-// }
+export function getSemesterModules(
+  timetable: { [moduleCode: string]: unknown },
+  modules: ModulesMap
+): Module[] {
+  return values(pick(modules, Object.keys(timetable)));
+}
 
-// function serializeModuleConfig(config: ModuleLessonConfig): string {
-//   // eg. { Lecture: 1, Laboratory: 2 } => LEC=1,LAB=2
-//   return map(config, (classNo, lessonType) =>
-//     [LESSON_TYPE_ABBREV[lessonType], encodeURIComponent(classNo)].join(
-//       LESSON_TYPE_SEP
-//     )
-//   ).join(LESSON_SEP);
-// }
+function serializeModuleConfig(config: ModuleLessonConfig): string {
+  // eg. { Lecture: 1, Laboratory: 2 } => LEC=1,LAB=2
+  return map(config, (classNo, lessonType) =>
+    [LESSON_TYPE_ABBREV[lessonType], encodeURIComponent(classNo)].join(
+      LESSON_TYPE_SEP
+    )
+  ).join(LESSON_SEP);
+}
 
-// function parseModuleConfig(
-//   serialized: string | string[] | null
-// ): ModuleLessonConfig {
-//   const config: ModuleLessonConfig = {};
-//   if (!serialized) return config;
+function parseModuleConfig(
+  serialized: string | string[] | null
+): ModuleLessonConfig {
+  const config: ModuleLessonConfig = {};
+  if (!serialized) return config;
 
-//   castArray(serialized).forEach((serializedModule) => {
-//     serializedModule.split(LESSON_SEP).forEach((lesson) => {
-//       const [lessonTypeAbbr, classNo] = lesson.split(LESSON_TYPE_SEP);
-//       const lessonType = LESSON_ABBREV_TYPE[lessonTypeAbbr];
-//       // Ignore unparsable/invalid keys
-//       if (!lessonType) return;
-//       config[lessonType] = classNo;
-//     });
-//   });
+  castArray(serialized).forEach((serializedModule) => {
+    serializedModule.split(LESSON_SEP).forEach((lesson) => {
+      const [lessonTypeAbbr, classNo] = lesson.split(LESSON_TYPE_SEP);
+      const lessonType = LESSON_ABBREV_TYPE[lessonTypeAbbr];
+      // Ignore unparsable/invalid keys
+      if (!lessonType) return;
+      config[lessonType] = classNo;
+    });
+  });
 
-//   return config;
-// }
+  return config;
+}
 
 function deltas(numbers: readonly number[]): number[] {
   const result: number[] = [];
@@ -551,17 +552,18 @@ export function formatNumericWeeks(weeks: NumericWeeks): string | null {
  * @param serialized
  * @returns
  */
-// export function serializeTimetable(timetable: SemTimetableConfig): string {
-//   // We are using query string safe characters, so this encoding is unnecessary
-//   return qs.stringify(mapValues(timetable, serializeModuleConfig), {
-//     encode: false,
-//   });
-// }
+export function serializeTimetable(timetable: SemTimetableConfig): string {
+  // We are using query string safe characters, so this encoding is unnecessary
+  return qs.stringify(mapValues(timetable, serializeModuleConfig));
+}
 
-// export function deserializeTimetable(serialized: string): SemTimetableConfig {
-//   const params = qs.parse(serialized);
-//   return mapValues(params, parseModuleConfig);
-// }
+export function deserializeTimetable(serialized: string): SemTimetableConfig {
+  const params = qs.parse(serialized) as Record<
+    string,
+    string | string[] | null
+  >;
+  return mapValues(params, parseModuleConfig);
+}
 
 export function isSameTimetableConfig(
   t1: SemTimetableConfig,

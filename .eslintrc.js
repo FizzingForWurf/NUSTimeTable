@@ -24,7 +24,14 @@ module.exports = {
   rules: {
     'no-unused-vars': 'off',
     'import/no-named-as-default': 0,
-    '@typescript-eslint/no-unused-vars': ['error'],
+    '@typescript-eslint/no-unused-vars': [
+      'error',
+      {
+        argsIgnorePattern: '_',
+        varsIgnorePattern: '_',
+        caughtErrorsIgnorePattern: '_',
+      },
+    ],
     '@typescript-eslint/no-var-requires': 'off',
     'react/prop-types': 'off',
     'react/jsx-uses-react': 'off',
