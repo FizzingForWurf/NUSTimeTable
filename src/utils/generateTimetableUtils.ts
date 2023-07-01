@@ -1,4 +1,4 @@
-import { isEmpty, max, min, size } from 'lodash';
+import { isEmpty, size } from 'lodash';
 import {
   AdjMatrixMapping,
   GraphAdjList,
@@ -8,7 +8,7 @@ import {
   codeTypeClassNode,
   codeTypeNode,
 } from 'types/conditions';
-import { doClassesOverlap, getOverlapInPermutation } from './conditionsUtils';
+import { doClassesOverlap, getOverlapsInPermutation } from './conditionsUtils';
 import qs from 'querystring';
 
 /** Serialise moduleCode, lessonType & classNo.
@@ -76,7 +76,6 @@ const permutateClasses = (
 ) => {
   let count = 0;
   const MAX_TRAVERSAL_COUNT = 1000;
-  const overlapLessons: string[] = [];
 
   const updateAdjListWithCorrectPath = (combinations: string[]) => {
     for (const classNoPath of combinations) {
@@ -145,50 +144,26 @@ const permutateClasses = (
 
     const overlaps = hasOverlaps(memo);
     if (!isEmpty(overlaps)) {
-      console.log('OVERLAP FOUND:', overlaps);
-      const first = convertClassNodeToLessonType(overlaps[0]);
-      const second = convertClassNodeToLessonType(overlaps[1]);
-
-      if (overlapLessons.includes(first) && overlapLessons.includes(second)) {
-        const index1 = overlapLessons.indexOf(first);
-        const index2 = overlapLessons.indexOf(second);
-        const frontIndex = min([index1, index2]) || 0;
-        const backIndex = max([index1, index2]) || 0;
-
-        if (backIndex - frontIndex > 1) {
-          const value = overlapLessons[backIndex];
-          overlapLessons.splice(backIndex, 1); // Remove backIndex
-          overlapLessons.splice(frontIndex + 1, 0, value); // Insert behind frontIndex
-        }
-      } else if (overlapLessons.includes(first)) {
-        const index = overlapLessons.indexOf(first);
-        const deleteAmt = size(overlapLessons) - index - 1;
-        overlapLessons.splice(index + 1, deleteAmt, second);
-      } else if (overlapLessons.includes(second)) {
-        const index = overlapLessons.indexOf(second);
-        const deleteAmt = size(overlapLessons) - index - 1;
-        overlapLessons.splice(index + 1, deleteAmt, first);
-      } else {
-        // Both not in previous overlap
-        overlapLessons.push(first);
-        overlapLessons.push(second);
-      }
+      const overlapLessonTypes = overlaps.map((classNodePath) =>
+        convertClassNodeToLessonType(classNodePath)
+      );
+      console.log('OVERLAP FOUND:', overlaps, overlapLessonTypes);
 
       // Converts overlapLesson array to Map type with neighbour nodes for traversal
-      const overlapping = new Map<string, string[]>();
-      overlapLessons.forEach((lessonType) => {
-        overlapping.set(lessonType, adjList[startClassNode][lessonType]);
+      const overlapMap = new Map<string, string[]>();
+      overlapLessonTypes.forEach((lessonType) => {
+        overlapMap.set(lessonType, adjList[startClassNode][lessonType]);
       });
 
       // Try to resolve overlapping lesson types. If overlap can be resolved,
       // traverse normally with the remaining lesson types from resolved selection of classes
-      const overlapResultMemo = overlapTraverse(overlapping);
+      const overlapResultMemo = overlapTraverse(overlapMap);
       console.log('OVERLAP RESULT:', overlapResultMemo);
       if (overlapResultMemo) {
         const remainingNodes = new Map<string, string[]>();
         Object.entries(adjList[startClassNode]).forEach(
           ([lessonType, classes]) => {
-            if (!overlapLessons.includes(lessonType)) {
+            if (!overlapLessonTypes.includes(lessonType)) {
               remainingNodes.set(lessonType, classes);
             }
           }
@@ -369,7 +344,7 @@ export function findSuitableTimetableConfig({
     const result = permutateClasses(
       startNode,
       adjList,
-      getOverlapInPermutation(adjMatrix, adjMatrixMap)
+      getOverlapsInPermutation(adjMatrix, adjMatrixMap)
     );
     if (result) return result;
   }
