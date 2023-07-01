@@ -1,6 +1,6 @@
 $empty-page-width: 200px;
 
-.emptyConditionWrapper {
+.emptyPageWrapper {
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -8,12 +8,12 @@ $empty-page-width: 200px;
   height: 50vh;
 }
 
-.emptyConditionIcon {
+.emptyPageIcon {
   width: $empty-page-width;
   margin-bottom: 24px;
 }
 
-.emptyConditionText {
+.emptyPageText {
   width: $empty-page-width * 2;
   text-align: center;
 }
