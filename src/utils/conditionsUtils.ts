@@ -59,25 +59,28 @@ export function doClassesOverlap(class1: RawLesson[], class2: RawLesson[]) {
 }
 
 /**
- * Find the first 2 overlapping lesson types within a permutation of class paths
+ * Find all overlapping lesson types within a permutation of class paths.
+ * Checks between every possible pairs of classes.
  * @param adjMatrix
  * @param adjMatrixMap
  * @param permutation
- * @returns 2 overlapping lesson types in an array. Empty array if no overlap found
+ * @returns Overlapping lesson types in an array. Empty array if no overlap found
  */
-export const getOverlapInPermutation =
+export const getOverlapsInPermutation =
   (adjMatrix: boolean[][], adjMatrixMap: AdjMatrixMapping) =>
   (permutation: string[]) => {
+    const overlaps = new Set<string>();
     for (let i = 0; i < permutation.length; i++) {
       const class1Index = adjMatrixMap[permutation[i]];
       for (let j = i + 1; j < permutation.length; j++) {
         const class2Index = adjMatrixMap[permutation[j]];
         if (!adjMatrix[class1Index][class2Index]) {
-          return [permutation[i], permutation[j]];
+          if (!overlaps.has(permutation[i])) overlaps.add(permutation[i]);
+          if (!overlaps.has(permutation[j])) overlaps.add(permutation[j]);
         }
       }
     }
-    return [];
+    return Array.from(overlaps);
   };
 
 /**
