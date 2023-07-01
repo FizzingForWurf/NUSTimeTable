@@ -3,6 +3,7 @@ import { TabContext, TabList, TabPanel } from '@mui/lab';
 import SemesterSwitcher from './SemesterSwitcher';
 import { useState } from 'react';
 import ConditionsTab from './conditions/ConditionsTab';
+import ModulesTab from './modules/ModulesTab';
 
 const MODULE_TAB = 'modules';
 const TIMETABLE_TAB = 'timetables';
@@ -25,7 +26,10 @@ const TimetableTabs = () => {
         <SemesterSwitcher />
       </Box>
 
-      <TabPanel value={MODULE_TAB}>modules</TabPanel>
+      <TabPanel value={MODULE_TAB}>
+        <ModulesTab />
+      </TabPanel>
+
       <TabPanel value={TIMETABLE_TAB}>
         <ConditionsTab showFab={tabValue === TIMETABLE_TAB} />
       </TabPanel>
