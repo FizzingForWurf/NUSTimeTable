@@ -10,6 +10,7 @@ import {
 } from 'types/conditions';
 import { doClassesOverlap, getOverlapsInPermutation } from './conditionsUtils';
 import qs from 'querystring';
+import { ModuleLessonConfig, SemTimetableConfig } from 'types/timetable';
 
 /** Serialise moduleCode, lessonType & classNo.
  * Used to deserialised later for reference
@@ -346,7 +347,30 @@ export function findSuitableTimetableConfig({
       adjList,
       getOverlapsInPermutation(adjMatrix, adjMatrixMap)
     );
-    if (result) return result;
+
+    // Map result to SemTimetableConfig to be displayed
+    if (result) {
+      const mappedResult: SemTimetableConfig = {};
+      for (const classNodePath of result) {
+        const classNode = deserialiseCodeTypeClassNode(classNodePath);
+        const { moduleCode, lessonType, classNo } = classNode;
+        const moduleLesson: ModuleLessonConfig = {
+          ...mappedResult[moduleCode],
+          [lessonType]: classNo,
+        };
+        mappedResult[moduleCode] = moduleLesson;
+      }
+
+      // Add starting node class path as well
+      const { moduleCode, lessonType } =
+        deserialiseCodeTypeNode(startLessonType);
+      const startModuleLesson: ModuleLessonConfig = {
+        ...mappedResult[moduleCode],
+        [lessonType]: classNo,
+      };
+      mappedResult[moduleCode] = startModuleLesson;
+      return mappedResult;
+    }
   }
   return {};
 }
