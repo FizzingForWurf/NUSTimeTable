@@ -52,6 +52,7 @@ import { getTimeAsDate } from './timeUtils';
 // import { getModuleSemesterData, getModuleTimetable } from './modules';
 // import { deltas } from './array';
 import qs from 'querystring';
+import { areLessonsSameClass, getModuleRawLessons } from './moduleUtils';
 
 type lessonTypeAbbrev = { [lessonType: string]: string };
 export const LESSON_TYPE_ABBREV: lessonTypeAbbrev = {
@@ -167,6 +168,50 @@ export function populateSemTimetableWithLessons(
       );
     }
   );
+}
+
+export function populateActiveLessonClasses(
+  activeLesson: Lesson,
+  timetableLessons: Lesson[],
+  currentSem: number,
+  modules: ModulesMap
+) {
+  const activeLessonCode = activeLesson.moduleCode;
+  const activeLessonModule = modules[activeLessonCode];
+  const moduleLessons = getModuleRawLessons(activeLessonModule, currentSem);
+
+  // Remove activeLesson because it will be added/pushed later
+  timetableLessons = timetableLessons.filter(
+    (lesson) => !areLessonsSameClass(lesson, activeLesson)
+  );
+
+  // Get all lessons of same lessonType as activeLesson
+  const sameLessonType = moduleLessons.filter(
+    (lesson) => lesson.lessonType === activeLesson.lessonType
+  );
+
+  sameLessonType.forEach((lesson) => {
+    // Inject module code and title to convert RawLesson -> ModifiableLesson
+    const modifiableLesson: Lesson & {
+      isActive?: boolean;
+      isAvailable?: boolean;
+    } = {
+      ...lesson,
+      moduleCode: activeLessonCode,
+      title: activeLessonModule.title,
+    };
+
+    // Mark same lessonType and same classNo (Same combo group)
+    if (areLessonsSameClass(modifiableLesson, activeLesson))
+      modifiableLesson.isActive = true;
+    // If not, this is just another option to choose from
+    else if (lesson.lessonType === activeLesson.lessonType)
+      modifiableLesson.isAvailable = true;
+
+    timetableLessons.push(modifiableLesson);
+  });
+
+  return timetableLessons;
 }
 
 /**
