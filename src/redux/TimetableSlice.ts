@@ -6,6 +6,7 @@ import {
   Lesson,
   ModifiedCell,
   ModulesMap,
+  SemTimetableConfig,
   SemesterColorMap,
   TimetableConfig,
 } from '../types/timetable';
@@ -82,6 +83,10 @@ const timetableSlice = createSlice({
     clearModifiedCell: (state) => {
       state.modifiedCell = null;
     },
+    /** Imports new timetable config into current semester */
+    importTimetable: (state, action: PayloadAction<SemTimetableConfig>) => {
+      state.lessons[state.semester] = action.payload;
+    },
   },
 });
 
@@ -95,5 +100,6 @@ export const {
   clearHoverLesson,
   setModifiedCell,
   clearModifiedCell,
+  importTimetable,
 } = timetableSlice.actions;
 export default timetableSlice.reducer;

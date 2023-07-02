@@ -8,6 +8,10 @@ import { findSuitableTimetableConfig } from 'utils/generateTimetableUtils';
 import { size } from 'lodash';
 import styles from './ConditionsTab.scss';
 import EmptyConditionSvg from 'svg/condition_options.svg';
+import { useState } from 'react';
+import TimetableResults from '../timetable/TimetableResults';
+import toast from 'react-hot-toast';
+import { SemTimetableConfig } from 'types/timetable';
 
 const EmptyConditionsPage = () => {
   return (
@@ -17,7 +21,7 @@ const EmptyConditionsPage = () => {
         src={EmptyConditionSvg}
         className={styles.emptyConditionIcon}
       />
-      <Typography className={styles.emptyPageText}>
+      <Typography className={styles.emptyConditionText}>
         No conditions found.
       </Typography>
       <Typography className={styles.emptyConditionText}>
@@ -33,6 +37,9 @@ type ConditionsTabProps = {
 
 const ConditionsTab = (props: ConditionsTabProps) => {
   const theme = useTheme();
+  const [showResults, setShowResults] = useState(false);
+  const [newTimetable, setNewTimetable] = useState<SemTimetableConfig>({});
+
   const modules = useSelector((state: RootState) => state.timetable.modules);
   const timetableConfig = useSelector(
     (state: RootState) => state.timetable.lessons
@@ -48,7 +55,10 @@ const ConditionsTab = (props: ConditionsTabProps) => {
 
   const handleGenerateClick = () => {
     const curSemTimetable = timetableConfig[currentSem] || {};
-    if (size(curSemTimetable) < 2) return;
+    if (size(curSemTimetable) < 2) {
+      toast.error('Please select at least 2 modules first!');
+      return;
+    }
 
     const data = setupTimetableGenerationData(
       currentSem,
@@ -58,6 +68,8 @@ const ConditionsTab = (props: ConditionsTabProps) => {
 
     const timetableResult = findSuitableTimetableConfig(data);
     console.log(timetableResult);
+    setNewTimetable(timetableResult);
+    setShowResults(true);
   };
 
   return (
@@ -67,6 +79,12 @@ const ConditionsTab = (props: ConditionsTabProps) => {
       <Divider>Conditions</Divider>
 
       <EmptyConditionsPage />
+
+      <TimetableResults
+        show={showResults}
+        timetable={newTimetable}
+        close={() => setShowResults(false)}
+      />
 
       <Zoom in={props.showFab} timeout={transitionDuration} unmountOnExit>
         <Fab
