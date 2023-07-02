@@ -1,0 +1,26 @@
+$no-timetable-width: 300px;
+
+.noTimetableWrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+}
+
+.noTimetableIcon {
+  width: $no-timetable-width;
+  margin-bottom: 24px;
+}
+
+.noTimetableText {
+  width: $no-timetable-width * 2;
+  text-align: center;
+}
+
+.dialogTitle {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
