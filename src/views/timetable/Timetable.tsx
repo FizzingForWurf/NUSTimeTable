@@ -1,12 +1,12 @@
-import { useEffect, useRef } from 'react';
 import TimetableTimings from './TimetableTimings';
 import styles from './Timetable.scss';
 import { SCHOOLDAYS, calculateStartAndEndOfDayTimings } from 'utils/timeUtils';
-import { useDispatch, useSelector } from 'react-redux';
-import { AppDispatch, RootState } from '../../redux/store';
+import { useDispatch } from 'react-redux';
+import { AppDispatch } from '../../redux/store';
 import {
   areOtherClassesAvailable,
   arrangeLessonsForWeek,
+  populateActiveLessonClasses,
   populateSemTimetableWithLessons,
 } from 'utils/timetableUtils';
 import { flatMapDeep, mapValues, values } from 'lodash';
@@ -15,78 +15,41 @@ import {
   ColoredLesson,
   Lesson,
   ModifiedCell,
+  ModulesMap,
+  SemTimetableConfig,
   TimetableArrangement,
 } from '../../types/timetable';
-import {
-  areLessonsSameClass,
-  getModuleRawLessons,
-} from '../../utils/moduleUtils';
+import { getModuleRawLessons } from '../../utils/moduleUtils';
 import TimetableDay from './TimetableDay';
-import {
-  cancelModifyActiveLesson,
-  clearModifiedCell,
-} from 'redux/TimetableSlice';
+import { cancelModifyActiveLesson } from 'redux/TimetableSlice';
 import classNames from 'classnames';
 import { fillColorMapping } from 'utils/colorUtils';
+import { useMaintainScrollPosition } from 'hooks/timetableHooks';
 
-/**
- * When a module is modified, we want to ensure the selected timetable cell
- * is in approximately the same location when all of the new options are rendered.
- * This is important for modules with a lot of options which can push the selected
- * option off screen and disorientate the user.
- */
-function maintainScrollPosition(
-  container: HTMLElement,
-  modifiedCell: ModifiedCell
-) {
-  const newCell = container.getElementsByClassName(modifiedCell.className)[0];
-  if (!newCell) return;
+type TimetableProps = {
+  readOnly: boolean;
+  currentSem: number;
+  modules: ModulesMap;
+  timetableConfig: SemTimetableConfig;
+  activeLesson?: Lesson | null;
+  modifiedCell?: ModifiedCell | null;
+};
 
-  const previousPosition = modifiedCell.position;
-  const currentPosition = newCell.getBoundingClientRect();
-
-  // We try to ensure the cell is in the same position on screen, so we calculate
-  // the new position by taking the difference between the two positions and
-  // adding it to the scroll position of the scroll container, which is the
-  // window for the y axis and the timetable container for the x axis
-  const x = currentPosition.left - previousPosition.left + window.scrollX;
-  const y = currentPosition.top - previousPosition.top + window.scrollY;
-
-  window.scroll(0, y);
-  container.scrollLeft = x; // eslint-disable-line no-param-reassign
-}
-
-export const Timetable = () => {
-  const timetableWindowRef = useRef<HTMLDivElement>(null);
+export const Timetable = (props: TimetableProps) => {
+  const {
+    readOnly,
+    currentSem,
+    modules,
+    timetableConfig,
+    activeLesson = null,
+    modifiedCell = null,
+  } = props;
   const dispatch = useDispatch<AppDispatch>();
-
-  const modules = useSelector((state: RootState) => state.timetable.modules);
-  const timetableConfig = useSelector(
-    (state: RootState) => state.timetable.lessons
-  );
-  const currentSem = useSelector(
-    (state: RootState) => state.timetable.semester
-  );
-  const activeLesson = useSelector(
-    (state: RootState) => state.timetable.activeLesson
-  );
-  const modifiedCell = useSelector(
-    (state: RootState) => state.timetable.modifiedCell
-  );
-
-  // const hidden = useSelector((state: RootState) => state.timetable.hidden);
-  // const hiddenModules = hidden[currentSem];
-
-  useEffect(() => {
-    if (modifiedCell && timetableWindowRef.current) {
-      maintainScrollPosition(timetableWindowRef.current, modifiedCell);
-      dispatch(clearModifiedCell());
-    }
-  });
+  const timetableWindowRef = useMaintainScrollPosition(modifiedCell);
 
   // Add lessons from modules into timetableConfig
   const timetableWithLessons = populateSemTimetableWithLessons(
-    timetableConfig[currentSem],
+    timetableConfig,
     modules,
     currentSem
   );
@@ -96,47 +59,16 @@ export const Timetable = () => {
 
   // Show all other available classes for the module of activeLesson
   if (activeLesson) {
-    const activeLessonCode = activeLesson.moduleCode;
-    const activeLessonModule = modules[activeLessonCode];
-    const moduleLessons = getModuleRawLessons(activeLessonModule, currentSem);
-
-    // Remove activeLesson because it will be added/pushed later
-    timetableLessons = timetableLessons.filter(
-      (lesson) => !areLessonsSameClass(lesson, activeLesson)
+    timetableLessons = populateActiveLessonClasses(
+      activeLesson,
+      timetableLessons,
+      currentSem,
+      modules
     );
-
-    // Get all lessons of same lessonType as activeLesson
-    const sameLessonType = moduleLessons.filter(
-      (lesson) => lesson.lessonType === activeLesson.lessonType
-    );
-
-    sameLessonType.forEach((lesson) => {
-      // Inject module code and title to convert RawLesson -> ModifiableLesson
-      const modifiableLesson: Lesson & {
-        isActive?: boolean;
-        isAvailable?: boolean;
-      } = {
-        ...lesson,
-        moduleCode: activeLessonCode,
-        title: activeLessonModule.title,
-      };
-
-      // Mark same lessonType and same classNo (Same combo group)
-      if (areLessonsSameClass(modifiableLesson, activeLesson))
-        modifiableLesson.isActive = true;
-      // If not, this is just another option to choose from
-      else if (lesson.lessonType === activeLesson.lessonType)
-        modifiableLesson.isAvailable = true;
-
-      timetableLessons.push(modifiableLesson);
-    });
   }
 
   // Inject color into module
-  const colors = fillColorMapping(
-    timetableConfig[currentSem] || {},
-    {} as ColorMapping
-  );
+  const colors = fillColorMapping(timetableConfig || {}, {} as ColorMapping);
   const coloredTimetableLessons = timetableLessons.map(
     (lesson: Lesson): ColoredLesson => ({
       ...lesson,
@@ -159,7 +91,7 @@ export const Timetable = () => {
           return {
             ...lesson,
             isModifiable:
-              // !readOnly && areOtherClassesAvailable(moduleTimetable, lesson.lessonType),
+              !readOnly &&
               areOtherClassesAvailable(moduleLessons, lesson.lessonType),
           };
         })
@@ -181,10 +113,16 @@ export const Timetable = () => {
     <div
       // Inject timetable color theme here!
       className={classNames(styles.timetableWrapper, 'theme-eighties')}
-      onClick={() => dispatch(cancelModifyActiveLesson())}
-      onKeyUp={(e) => {
-        e.key === 'Escape' && dispatch(cancelModifyActiveLesson());
-      }}
+      onClick={
+        !readOnly ? () => dispatch(cancelModifyActiveLesson()) : undefined
+      }
+      onKeyUp={
+        !readOnly
+          ? (e) => {
+              e.key === 'Escape' && dispatch(cancelModifyActiveLesson());
+            }
+          : undefined
+      }
       role="presentation" // Address eslint: no-static-element-interactions
     >
       <div className={styles.timetableScroll} ref={timetableWindowRef}>
