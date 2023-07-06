@@ -13,3 +13,4 @@ declarations
 
 # Application secrets (API keys)
 .env
+*.env
