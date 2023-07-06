@@ -11,7 +11,3 @@ yarn start
 ## Build
 
 yarn build
-
-## Demo
-
-[NUS Timetable](https://nustimetable.web.app)
