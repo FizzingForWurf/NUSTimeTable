@@ -18,6 +18,7 @@ import {
 } from '@mui/material';
 import LoadingButton from '@mui/lab/LoadingButton';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
+import GoogleSignInButton from './GoogleSignInButton';
 
 const Login = () => {
   const [showRegister, setShowRegister] = useState(false);
@@ -120,6 +121,7 @@ const Login = () => {
       </form>
 
       <Register show={showRegister} onClose={() => setShowRegister(false)} />
+      <GoogleSignInButton />
     </div>
   );
 };

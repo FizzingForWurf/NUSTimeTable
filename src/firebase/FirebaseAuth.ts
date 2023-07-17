@@ -6,6 +6,7 @@ import {
   signOut,
   GoogleAuthProvider,
   signInWithRedirect,
+  signInWithPopup,
   setPersistence,
   browserSessionPersistence,
   User,
@@ -44,3 +45,5 @@ export const firebaseGetCurrentUser = () => {
   const user = auth.currentUser;
   console.log('CURRENT USER:', user);
 };
+
+export const signInWithGoogle = () => signInWithPopup(auth, provider);
