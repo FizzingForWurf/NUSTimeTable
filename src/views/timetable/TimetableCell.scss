@@ -17,6 +17,9 @@ $cell-border-radius: 6px;
   transition: background-color $desktop-entering-duration
     $material-deceleration-curve;
   animation-duration: $desktop-entering-duration;
+  display: flex; // To position lock button within cell
+  flex-direction: row;
+  align-items: center;
 
   &:hover,
   &:focus {

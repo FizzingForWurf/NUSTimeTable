@@ -17,6 +17,9 @@ import {
 } from 'redux/TimetableSlice';
 import { isEqual } from 'lodash';
 import classNames from 'classnames';
+import { IconButton } from '@mui/material';
+import { Lock, LockOpen } from '@mui/icons-material';
+import { useState } from 'react';
 
 type TimetableCellProps = {
   lesson: ModifiableLesson;
@@ -24,6 +27,7 @@ type TimetableCellProps = {
 };
 
 const TimetableCell = (props: TimetableCellProps) => {
+  const [lockCell, setLockCell] = useState(false);
   // const weekText = consumeWeeks<React.ReactNode>(
   //   props.lesson.weeks,
   //   formatNumericWeeks,
@@ -43,9 +47,14 @@ const TimetableCell = (props: TimetableCellProps) => {
       : dispatch(clearHoverLesson());
   };
 
+  const handleCellLock = (e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevents onClick timetable cell
+    setLockCell(!lockCell);
+  };
+
   const handleTimetableCellClick = (e: React.MouseEvent) => {
     e.stopPropagation(); // Prevents onClick on timetable background
-    if (!props.lesson.isModifiable) return; // Ignore lessons that cannot be modified
+    if (!props.lesson.isModifiable || lockCell) return; // Ignore lessons that cannot be modified
 
     if (props.lesson.isActive) {
       // Clicking on activeLesson means to cancel changing it
@@ -68,8 +77,6 @@ const TimetableCell = (props: TimetableCellProps) => {
       dispatch(setModifiedCell(modifiedCell));
     }
   };
-
-  // const colorChooser = [styles.color_1];
 
   const timetableCellStyle = classNames(
     styles.baseCell,
@@ -110,6 +117,11 @@ const TimetableCell = (props: TimetableCellProps) => {
         </div>
         {/* {weekText && <div>{weekText}</div>} */}
       </div>
+      {props.lesson.isModifiable && !props.lesson.isAvailable && (
+        <IconButton size="small" onClick={handleCellLock}>
+          {lockCell ? <Lock /> : <LockOpen />}
+        </IconButton>
+      )}
     </Cell>
   );
 };
