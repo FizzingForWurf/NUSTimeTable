@@ -23,13 +23,13 @@ import { getModuleRawLessons } from '../../utils/moduleUtils';
 import TimetableDay from './TimetableDay';
 import { cancelModifyActiveLesson } from 'redux/TimetableSlice';
 import classNames from 'classnames';
-import { fillColorMapping } from 'utils/colorUtils';
 import { useMaintainScrollPosition } from 'hooks/timetableHooks';
 
 type TimetableProps = {
   readOnly: boolean;
   currentSem: number;
   modules: ModulesMap;
+  colors: ColorMapping;
   timetableConfig: SemTimetableConfig;
   activeLesson?: Lesson | null;
   modifiedCell?: ModifiedCell | null;
@@ -68,11 +68,10 @@ export const Timetable = (props: TimetableProps) => {
   }
 
   // Inject color into module
-  const colors = fillColorMapping(timetableConfig || {}, {} as ColorMapping);
   const coloredTimetableLessons = timetableLessons.map(
     (lesson: Lesson): ColoredLesson => ({
       ...lesson,
-      colorIndex: colors[lesson.moduleCode],
+      colorIndex: props.colors[lesson.moduleCode],
     })
   );
 

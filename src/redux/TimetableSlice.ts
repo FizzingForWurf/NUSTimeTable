@@ -12,6 +12,7 @@ import {
 } from '../types/timetable';
 import { randomModuleLessonConfig } from '../utils/timetableUtils';
 import { getModuleSemesterData } from '../utils/moduleUtils';
+import { fillColorMapping } from 'utils/colorUtils';
 
 const initialState = {
   /** Currently viewed semester */
@@ -55,9 +56,11 @@ const timetableSlice = createSlice({
         [lessonType]: classNo,
       };
     },
-    addModule: (state, action) => {
-      const { semester, module }: { semester: Semester; module: Module } =
-        action.payload;
+    addModule: (
+      state,
+      action: PayloadAction<{ semester: Semester; module: Module }>
+    ) => {
+      const { semester, module } = action.payload;
 
       const moduleCode = module.moduleCode;
       state.modules[moduleCode] = module; // Add module to redux
@@ -70,6 +73,21 @@ const timetableSlice = createSlice({
         ...state.lessons[semester],
         [moduleCode]: lessonData,
       };
+
+      state.colors[semester] = fillColorMapping(
+        state.lessons[semester] || {},
+        state.colors[semester] || {}
+      );
+    },
+    deleteModule: (
+      state,
+      action: PayloadAction<{
+        semester: Semester;
+        moduleCode: string;
+      }>
+    ) => {
+      const { semester, moduleCode } = action.payload;
+      delete state.lessons[semester][moduleCode];
     },
     setHoverLesson: (state, action: PayloadAction<HoverLesson>) => {
       state.hoverLesson = action.payload;
@@ -93,6 +111,7 @@ const timetableSlice = createSlice({
 export const {
   switchSemester,
   addModule,
+  deleteModule,
   modifyActiveLesson,
   cancelModifyActiveLesson,
   changeLessonConfig,

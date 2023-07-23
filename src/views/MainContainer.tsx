@@ -2,6 +2,7 @@ import Timetable from 'views/timetable/Timetable';
 import TimetableTabs from 'views/tabs/TimetableTabs';
 import { useSelector } from 'react-redux';
 import { RootState } from 'redux/store';
+import { fillColorMapping } from 'utils/colorUtils';
 
 const MainContainer = () => {
   const modules = useSelector((state: RootState) => state.timetable.modules);
@@ -18,6 +19,14 @@ const MainContainer = () => {
     (state: RootState) => state.timetable.modifiedCell
   );
 
+  const currentColors = useSelector(
+    (state: RootState) => state.timetable.colors
+  );
+  const colors = fillColorMapping(
+    timetableConfig[currentSem] || {},
+    currentColors[currentSem] || {}
+  );
+
   // const hidden = useSelector((state: RootState) => state.timetable.hidden);
   // const hiddenModules = hidden[currentSem];
   return (
@@ -27,6 +36,7 @@ const MainContainer = () => {
         timetableConfig={timetableConfig[currentSem]}
         currentSem={currentSem}
         modules={modules}
+        colors={colors}
         activeLesson={activeLesson}
         modifiedCell={modifiedCell}
       />
