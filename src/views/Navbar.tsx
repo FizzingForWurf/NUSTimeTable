@@ -44,14 +44,6 @@ const Navbar = () => {
             NUS TimeTable
           </Typography>
 
-          <Button
-            color="inherit"
-            onClick={() => navigate('modules')}
-            sx={{ display: { xs: 'none', sm: 'block' } }}
-          >
-            Module List
-          </Button>
-
           <Box sx={{ flexGrow: 1 }} />
 
           {!curUser && (
