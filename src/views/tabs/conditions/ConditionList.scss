@@ -1,0 +1,19 @@
+$empty-page-width: 200px;
+
+.emptyConditionWrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 50vh;
+}
+
+.emptyConditionIcon {
+  width: $empty-page-width;
+  margin-bottom: 24px;
+}
+
+.emptyConditionText {
+  width: $empty-page-width * 2;
+  text-align: center;
+}
