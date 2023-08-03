@@ -15,7 +15,7 @@
     "Timetable",
     "NUSMods"
   ],
-  "author": "Vishwas",
+  "author": "ST-Engineering",
   "license": "MIT",
   "dependencies": {
     "@emotion/react": "^11.11.0",

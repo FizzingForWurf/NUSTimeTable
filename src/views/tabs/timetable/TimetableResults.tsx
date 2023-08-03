@@ -46,6 +46,9 @@ const TimetableResults = (props: TimetableResultsProps) => {
   const currentSem = useSelector(
     (state: RootState) => state.timetable.semester
   );
+  const currentColors = useSelector(
+    (state: RootState) => state.timetable.colors
+  );
 
   const handleImportTimetable = () => {
     dispatch(importTimetable(props.timetable));
@@ -71,6 +74,7 @@ const TimetableResults = (props: TimetableResultsProps) => {
             readOnly
             currentSem={currentSem}
             modules={modules}
+            colors={currentColors[currentSem] || {}}
             timetableConfig={props.timetable}
           />
         )}
