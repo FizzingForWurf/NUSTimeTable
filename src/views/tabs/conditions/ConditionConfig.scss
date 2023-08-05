@@ -3,3 +3,16 @@
   align-items: center;
   margin-bottom: 16px;
 }
+
+.pickerWrapper {
+  display: flex;
+  align-items: center;
+  margin-right: 4px;
+  padding-top: 8px;
+  overflow-x: auto;
+}
+
+.timePicker {
+  margin-right: 16px;
+  min-width: 192px;
+}

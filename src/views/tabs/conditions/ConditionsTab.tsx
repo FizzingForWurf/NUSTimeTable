@@ -1,35 +1,16 @@
 import { EditCalendar } from '@mui/icons-material';
-import { Divider, Fab, Typography, Zoom, useTheme } from '@mui/material';
+import { Divider, Fab, Zoom, useTheme } from '@mui/material';
 import ConditionConfig from './ConditionConfig';
 import { useSelector } from 'react-redux';
 import { RootState } from 'redux/store';
 import { setupTimetableGenerationData } from 'utils/conditionsUtils';
 import { findSuitableTimetableConfig } from 'utils/generateTimetableUtils';
 import { size } from 'lodash';
-import styles from './ConditionsTab.scss';
-import EmptyConditionSvg from 'svg/condition_options.svg';
 import { useState } from 'react';
 import TimetableResults from '../timetable/TimetableResults';
 import toast from 'react-hot-toast';
 import { SemTimetableConfig } from 'types/timetable';
-
-const EmptyConditionsPage = () => {
-  return (
-    <div className={styles.emptyConditionWrapper}>
-      <img
-        alt="No conditions found"
-        src={EmptyConditionSvg}
-        className={styles.emptyConditionIcon}
-      />
-      <Typography className={styles.emptyConditionText}>
-        No conditions found.
-      </Typography>
-      <Typography className={styles.emptyConditionText}>
-        Add conditions above to customise your timetable!
-      </Typography>
-    </div>
-  );
-};
+import ConditionsList from './ConditionsList';
 
 type ConditionsTabProps = {
   showFab: boolean;
@@ -78,7 +59,7 @@ const ConditionsTab = (props: ConditionsTabProps) => {
 
       <Divider>Conditions</Divider>
 
-      <EmptyConditionsPage />
+      <ConditionsList />
 
       <TimetableResults
         show={showResults}
