@@ -1,5 +1,3 @@
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 import styles from './ConditionConfig.scss';
 import {
@@ -50,29 +48,35 @@ const DaySelector = () => {
 };
 
 const ConditionConfig = () => {
+  const [startTime, setStartTime] = useState<Date | null>(null);
+  const [endTime, setEndTime] = useState<Date | null>(null);
+
   return (
     <div className={styles.conditionConfigWrapper}>
-      <LocalizationProvider dateAdapter={AdapterDayjs}>
+      <div className={styles.pickerWrapper}>
         <TimePicker
           label="Start time"
           ampm={false}
           timeSteps={{ minutes: 30 }}
-          sx={{ mr: 2 }}
+          value={startTime}
+          onChange={(newStartTime) => setStartTime(newStartTime)}
+          className={styles.timePicker}
         />
         <TimePicker
           label="End time"
           ampm={false}
           timeSteps={{ minutes: 30 }}
-          sx={{ mr: 2 }}
+          value={endTime}
+          onChange={(newEndTime) => setEndTime(newEndTime)}
+          className={styles.timePicker}
         />
-      </LocalizationProvider>
 
-      <DaySelector />
+        <DaySelector />
+      </div>
 
       <IconButton>
         <HelpOutline />
       </IconButton>
-
       <Box flexGrow={1} />
 
       <Button variant="contained" startIcon={<Add />}>

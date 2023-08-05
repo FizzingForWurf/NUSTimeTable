@@ -6,6 +6,8 @@ import { useDispatch } from 'react-redux';
 import { firebaseCheckAuthState } from './firebase/FirebaseAuth';
 import { signInUser, signOutUser } from './redux/UserSlice';
 import { AppDispatch } from './redux/store';
+import { LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 
 // Import all scss classnames (NOT as module)
 import 'styles/main.scss';
@@ -22,10 +24,10 @@ export function App() {
   }, []);
 
   return (
-    <div>
+    <LocalizationProvider dateAdapter={AdapterDateFns}>
       <Navbar />
       <Paths />
       <Toaster position="bottom-center" />
-    </div>
+    </LocalizationProvider>
   );
 }
