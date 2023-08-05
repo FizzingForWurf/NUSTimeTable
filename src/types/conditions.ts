@@ -52,3 +52,14 @@ export type LessonTypeMapping = {
 export type LessonTypeClass = {
   [code_type: string]: string;
 };
+
+export type Condition = {
+  startTime?: Date;
+  endTime?: Date;
+  Monday: boolean;
+  Tuesday: boolean;
+  Wednesday: boolean;
+  Thursday: boolean;
+  Friday: boolean;
+  Saturday: boolean;
+};
